@@ -10,6 +10,7 @@ export let userRouter = Router()
 
 userRouter.post("/" , validation(signUpSchema), asyncHandler(us.signUp))
 userRouter.post("/login" , validation(loginSchema), asyncHandler(us.login))
+userRouter.post("/googleLogin" , validation(loginSchema), asyncHandler(us.googleLogin))
 
 
 userRouter.get("/verify/:token" , validation(verfiySchema) , asyncHandler(us.verify))   

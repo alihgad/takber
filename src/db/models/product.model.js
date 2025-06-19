@@ -1,4 +1,7 @@
 import mongoose from "mongoose";
+import stockModel from "./stock.model.js";
+import { v2 as cloudinary } from "cloudinary";
+import categoryModel from "./category.model.js";
 
 
 
@@ -18,7 +21,7 @@ let productSchema = new mongoose.Schema({
         lowercase: true,
         unique: true
     },
-    image:{
+    image: {
         secure_url: {
             type: String,
             required: true
@@ -28,7 +31,7 @@ let productSchema = new mongoose.Schema({
             required: true
         }
     },
-    images:{
+    images: {
         type: [{
             secure_url: {
                 type: String,
@@ -41,7 +44,7 @@ let productSchema = new mongoose.Schema({
         }],
         required: true
     },
-    customId:{
+    customId: {
         type: String,
         required: true,
         unique: true
@@ -81,18 +84,73 @@ let productSchema = new mongoose.Schema({
         required: true
     }
 },
-{
-    timestamps: true,
-    versionKey: false
-})
+    {
+        timestamps: true,
+        versionKey: false
+    })
 
 
-let productModel = mongoose.model("Product", productSchema)
 
-productModel.on("delete", async (doc) => {
-    await cloudinary.api.delete_resources_by_prefix(`Takbeer/category/${doc.category.customId}/products/${doc.customId}`)
-    await stockModel.deleteMany({ productId: doc._id })
-})
+const deleting = async (doc) => {
+    if (doc) {
+        console.log("Deleting product", doc._id);
+
+        await stockModel.deleteMany({ productId: doc._id });
+        console.log("Deleted product stocks:", doc._id);
+
+        let catCustoumId = await categoryModel.findOne({ _id: doc.category }).select("customId");
+        if (catCustoumId?.customId && doc?.customId) {
+            const path = `Takbeer/category/${catCustoumId?.customId}/products/${doc?.customId}`;
+            await cloudinary.api.delete_resources_by_prefix(path);
+            console.log("Deleted Cloudinary resources:", path);
+
+            await cloudinary.api.delete_folder(path);
+            console.log("Deleted folder:", path);
+        }else{
+            console.log("No customId found for category or product, skipping Cloudinary deletion.");
+        }
+
+
+
+
+    }
+};
+
+// post hook بعد findOneAndDelete
+productSchema.post("findOneAndDelete", async function (doc) {
+    await deleting(doc);
+});
+
+// post hook بعد findByIdAndDelete
+productSchema.post("findByIdAndDelete", async function (doc) {
+    await deleting(doc);
+});
+
+// pre hook لـ deleteOne
+productSchema.pre("deleteOne", { document: false, query: true }, async function () {
+    const doc = await this.model.findOne(this.getFilter());
+    await deleting(doc);
+});
+
+// pre hook لـ deleteMany
+productSchema.pre("deleteMany", { document: false, query: true }, async function () {
+    const docs = await this.model.find(this.getFilter());
+    for (const doc of docs) {
+        await deleting(doc);
+    }
+});
+
+// post hook لـ remove (لو حذفت document مباشر)
+productSchema.post("remove", async function () {
+    await deleting(this); // هنا this = document
+});
+
+
+
+
+
+let productModel = mongoose.model("Product", productSchema);
+
 
 
 export default productModel

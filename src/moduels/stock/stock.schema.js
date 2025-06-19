@@ -24,7 +24,8 @@ export const deleteStockSchema = {
 
 export const updateStockSchema = {
     params: joi.object({
-        stockId: generalRules.objectId.required()
+        stockId: generalRules.objectId.required(),
+        productId: generalRules.objectId.required()
     }),
     body: joi.object({
         quantity: joi.number(),

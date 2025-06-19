@@ -2,15 +2,16 @@ import slugify from "slugify";
 import { nanoid } from "nanoid";
 import { asyncHandler } from "../../utils/ErrorHandling.js";
 import productModel from "./../../db/models/product.model.js";
-import {cloudinaryConfig as cloudinary} from "../../middleware/multer.js";
+import { v2 as cloudinary } from "cloudinary";
 import categoryModel from "../../db/models/category.model.js";
 import { getProductStocks } from "../../utils/productStocks.js";
+import e from "express";
 
 export const createProduct = asyncHandler(async (req, res, next) => {
 
     const { title, description, price, discount, category, brand } = req.body
-    console.log(req.body)
-    
+
+
 
     let titleExist = await productModel.findOne({ title: title.toLowerCase() })
     if (titleExist) {
@@ -28,6 +29,8 @@ export const createProduct = asyncHandler(async (req, res, next) => {
         folder: `Takbeer/category/${cat.customId}/products/${customId}`
     })
 
+    req.image = { secure_url, public_id }
+
 
     let data = []
     if (req.files?.images?.length > 0) {
@@ -42,6 +45,7 @@ export const createProduct = asyncHandler(async (req, res, next) => {
         }
     }
 
+    req.images = data
     req.folder = `Takbeer/category/${cat.customId}/products/${customId}`
 
 
@@ -78,7 +82,7 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
     let product = await productModel.findOne({ _id: ProductID })
 
     if (!product) {
-        return res.status(404).json({ msg: 'Product not found' })
+        return next(new Error('Product not found', { cause: 404 }))
     }
 
 
@@ -203,10 +207,15 @@ export const changePhoto = asyncHandler(async (req, res, next) => {
 })
 
 
-export const getAllProudcts = asyncHandler(async (req, res, next) => {
+export const getfullProudcts = asyncHandler(async (req, res, next) => {
+    let { filter } = req.query
+    
+
+    
+        let products = await productModel.find().lean()
+    
 
 
-    let products = await productModel.find().lean()
 
     if (!products || products.length === 0) {
         return res.status(404).json({ msg: 'No products found' })
@@ -217,18 +226,33 @@ export const getAllProudcts = asyncHandler(async (req, res, next) => {
     return res.json({ msg: 'Products fetched', result })
 })
 
+export const getProudcts = asyncHandler(async (req, res, next) => {
+    
+ 
+    
+    let products = await productModel.find().lean().select("title image _id price subPrice isDiscounted discount  ")
+    
+
+    if (!products || products.length === 0) {
+        return res.status(404).json({ msg: 'No products found' })
+    }
+
+
+    return res.json({ msg: 'Products fetched', products })
+})
+
 export const getOneProudct = asyncHandler(async (req, res, next) => {
     let { ProductID } = req.params
 
     let product = await productModel.findById(ProductID).lean()
 
-    if(!product) {
+    if (!product) {
         return next(new Error('Product not found', { cause: 404 }))
     }
 
     let last = await getProductStocks([product])
     console.log("last", last)
-    
+
 
     return res.json({ msg: 'Product fetched', last })
 })
@@ -240,7 +264,7 @@ export const deleteProudct = asyncHandler(async (req, res, next) => {
 
 
     let Product = await productModel.findOneAndDelete({ _id: ProductID }).populate('category')
-
+    
 
     if (!Product) {
         return res.status(404).json({
@@ -248,8 +272,6 @@ export const deleteProudct = asyncHandler(async (req, res, next) => {
         })
     }
 
-    await cloudinary.api.delete_resources_by_prefix(`Takbeer/category/${Product.category.customId}/products/${Product.customId}`)
-    await cloudinary.api.delete_folder(`Takbeer/category/${Product.category.customId}/products/${Product.customId}`)
 
     return res.json({ msg: 'Product deleted', Product })
 })
@@ -259,8 +281,17 @@ export const getNewArrival = asyncHandler(async (req, res, next) => {
     let products = await productModel.find().sort({ updatedAt: -1 }).limit(10).lean()
 
     let result = await getProductStocks(products)
-    
+
 
     return res.json({ msg: 'New arrivals fetched', result })
+})
+
+
+export const gethotDeals = asyncHandler(async (req, res, next) => {
+    let products = await productModel.find({ isDiscounted: true }).sort({ discount: -1 }).limit(10).lean()
+
+    let result = await getProductStocks(products)
+
+    return res.json({ msg: 'Hot deals fetched', result })
 })
 

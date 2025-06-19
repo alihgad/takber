@@ -55,8 +55,11 @@ export let login = async (req, res, next) => {
     if (!user.Verfied) {
         return res.status(401).json({ message: "Email Not Verified" })
     }
+    if (user.provider !== "local") {
+        return res.status(401).json({ message: "Please login with google" })
+    }
 
-    let isCorrect = await  bcrypt.compare(req.body.password, user.password)
+    let isCorrect =  bcrypt.compare(req.body.password, user.password)
 
 
 
@@ -65,10 +68,38 @@ export let login = async (req, res, next) => {
     }
 
 
-    let token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, { expiresIn: "1d" })
+    let token = jwt.sign({ id: user._id }, process.env.SECRET_KEY)
 
     return res.status(201).json({ msg: "done", token })
 
+}
+
+export let googleLogin = async (req, res, next) => {
+    const { idToken } = req.body;
+
+    // Verify the ID token with Google's API
+    const ticket = await client.verifyIdToken({
+        idToken,
+        audience: process.env.client_id,
+    });
+
+    const payload = ticket.getPayload();
+    const { sub: googleId, email, name } = payload;
+
+    // Check if user exists in the database
+    let user = await userModel.findOne({ email });
+
+    if (!user) {
+        // If user does not exist, create a new user
+        user = new userModel({  email, name, Verfied: true , provider: "google" });
+        await user.save();
+    }
+
+
+    // Generate a JWT token
+    const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY);
+
+    return res.status(200).json({ msg: "Logged in successfully", token });
 }
 
 export let verify = async (req, res, next) => {

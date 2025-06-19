@@ -20,7 +20,6 @@ let userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true,
         min:6,
         max:20
     },
@@ -48,8 +47,12 @@ let userSchema = new mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: "Coupon"
         }
-    ]
-    
+    ],
+    provider:{
+        type: String,
+        enum: ["google", "local"],
+        default: "local"
+    }
 
 }, { timestamps: true } )
 

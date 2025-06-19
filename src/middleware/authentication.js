@@ -11,10 +11,8 @@ const authentication= asyncHandler(
             
         const {token}=req.headers
         
-
-       
         if(!token){
-            return res.status(401).json({message:"Token not found"})
+            return next(new Error('Token not found',{cause:401}))
 
         }
 

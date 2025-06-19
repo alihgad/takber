@@ -9,8 +9,8 @@ import validation from "../../middleware/validation.js";
 let stockRouter = Router()
 
 
-stockRouter.post("/:productId",authentication,authorization(["admin"]),validation(ss.createStockSchema),asyncHandler(sc.addStock))
 stockRouter.get("/:productId",validation(ss.getStockSchema),asyncHandler(sc.getProductStock))
+stockRouter.post("/:productId",authentication,authorization(["admin"]),validation(ss.createStockSchema),asyncHandler(sc.addStock))
 stockRouter.put("/:productId/:stockId",validation(ss.updateStockSchema),asyncHandler(sc.updateProductStock))
 
 

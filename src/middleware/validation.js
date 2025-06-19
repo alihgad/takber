@@ -6,12 +6,13 @@ const validation = (schema) => {
 
         async (req, res, next) => {
                 
+                
             for (const key in schema) {
 
                 const { error } = schema[key].validate(req[key], { abortEarly: false });
                 if (error) {
                     const message = error.details.map(detail => detail.message);
-                    return res.status(400).json({ message });
+                    next(new Error(message, { cause: 400 }));
 
                 }
             }

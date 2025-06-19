@@ -14,14 +14,15 @@ export let createCategory = {
 export let updateCategory = {
     body: Joi.object({
         title: Joi.string(),
-        image: glopalSchema.file.required(),
+
 
     }),
     headers: glopalSchema.headers.required(),
     params: Joi.object({
         id: glopalSchema.id.required(),
     }),
-    headers: glopalSchema.headers.required(),
+    file: glopalSchema.file,
+    
 }
 
 export let getCategory={

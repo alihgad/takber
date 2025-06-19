@@ -48,12 +48,16 @@ export const updateCategory = async (req, res, next) => {
             folder: `Takbeer/category/${customId}`
         })
 
-        category.secure_url = data.secure_url
-        category.public_id = data.public_id
+        category.secure_url = secure_url
+        category.public_id = public_id
         req.folder = `Takbeer/category/${customId}`
     }
 
     if(title){
+        let exist = await categoryModel.findOne({ title: title })
+        if (exist && exist._id.toString() !== category._id.toString()) {
+            return next(new Error('Category title already exists', { cause: 400 }))
+        }
         category.title = title
         category.slug = slugify(title)
     }

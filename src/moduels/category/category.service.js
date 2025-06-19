@@ -5,7 +5,9 @@ import categoryModel from "../../db/models/category.model.js"
 
 export const createCategory = async (req, res, next) => {
     let customId = nanoid(5)
-
+    if (!req.file) {
+        return next(new Error('Image is required', { cause: 400 }))
+    }
     let { secure_url, public_id } = await cloudinary.uploader.upload(req.file.path, {
         folder: `Takbeer/category/${customId}`
     })

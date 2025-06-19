@@ -11,8 +11,8 @@ let categoryRouter = Router()
 
 categoryRouter.get("/",asyncHandler(cs.getCategories))
 categoryRouter.get("/:id",validation(csSchema.getCategory),asyncHandler(cs.getCategory))
-categoryRouter.post("/", validation(csSchema.createCategory),authentication,authorization(["admin"]), multerHost("image").single("image") ,asyncHandler(cs.createCategory))
-categoryRouter.put("/:id",validation(csSchema.updateCategory) ,authentication,authorization(["admin"]), multerHost("image").single("image") ,asyncHandler(cs.updateCategory))
-categoryRouter.delete("/:id",validation(csSchema.deleteCategory) ,authentication,authorization(["admin"]),asyncHandler(cs.deleteCategory))
+categoryRouter.post("/", authentication,authorization(["admin"]), multerHost("image").single("image") ,validation(csSchema.createCategory),asyncHandler(cs.createCategory))
+categoryRouter.put("/:id" ,authentication,authorization(["admin"]), multerHost("image").single("image") ,validation(csSchema.updateCategory),asyncHandler(cs.updateCategory))
+categoryRouter.delete("/:id" ,authentication,authorization(["admin"]),validation(csSchema.deleteCategory),asyncHandler(cs.deleteCategory))
 
 export default categoryRouter

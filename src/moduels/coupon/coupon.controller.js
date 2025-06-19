@@ -1,6 +1,6 @@
 import { Router } from "express";
 import * as cs from "./coupon.service.js";
-import { multerHost } from "../../middleware/multer.js";
+// import { multerHost } from "../../middleware/multer.js";
 import authentication from "../../middleware/authentication.js";
 import authorization from "../../middleware/authorization.js";
 import { asyncHandler } from "../../utils/ErrorHandling.js";

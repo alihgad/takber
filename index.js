@@ -1,5 +1,7 @@
 import express from 'express'
-
+import multer from 'multer'
+import dotenv from 'dotenv'
+dotenv.config()
 import connection from './src/db/connection.js'
 
 import bootstrap from './src/bootstrap.js'
@@ -8,8 +10,14 @@ const app = express()
 const port = process.env.PORT || 3000
 
 connection
+
 app.use(express.json())
+
 app.use(express.urlencoded({ extended: true }))
+
+
+
+
 
 bootstrap(app)
 

@@ -1,10 +1,11 @@
 import { asyncHandler } from "../utils/ErrorHandling.js";
 
 const validation = (schema) => {
-
+    
     return asyncHandler(
-        
+
         async (req, res, next) => {
+                
             for (const key in schema) {
 
                 const { error } = schema[key].validate(req[key], { abortEarly: false });

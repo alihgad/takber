@@ -68,7 +68,22 @@ let productSchema = new mongoose.Schema({
     discount: {
         type: Number,
         default: 0
+    },
+    brand: {
+        type: String,
+        required: true,
+        trim: true,
+        lowercase: true
+    },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true
     }
+},
+{
+    timestamps: true,
+    versionKey: false
 })
 
 

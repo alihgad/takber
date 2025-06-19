@@ -2,13 +2,15 @@ import slugify from "slugify";
 import { nanoid } from "nanoid";
 import { asyncHandler } from "../../utils/ErrorHandling.js";
 import productModel from "./../../db/models/product.model.js";
-import { v2 as cloudinary } from "cloudinary"
+import {cloudinaryConfig as cloudinary} from "../../middleware/multer.js";
 import categoryModel from "../../db/models/category.model.js";
-import stockModel from "../../db/models/stock.model.js";
+import { getProductStocks } from "../../utils/productStocks.js";
 
 export const createProduct = asyncHandler(async (req, res, next) => {
 
-    const { title, description, price, discount, category } = req.body
+    const { title, description, price, discount, category, brand } = req.body
+    console.log(req.body)
+    
 
     let titleExist = await productModel.findOne({ title: title.toLowerCase() })
     if (titleExist) {
@@ -57,8 +59,9 @@ export const createProduct = asyncHandler(async (req, res, next) => {
         image: { secure_url, public_id },
         images: data,
         customId,
-        category
-
+        category,
+        brand,
+        createdBy: req.user._id
     })
 
     req.data = { model: productModel, id: product._id }
@@ -205,25 +208,11 @@ export const getAllProudcts = asyncHandler(async (req, res, next) => {
 
     let products = await productModel.find().lean()
 
-    let result = []
-
-    for (const product of products) {
-
-        let stock = await stockModel.find({ productId: product._id })
-
-        let last = []
-
-        if (stock.length != 0) {
-
-            for (const s of stock) {
-                product.quantity = s.quantity
-                product.color = s.color
-                product.size = s.size
-
-                result.push(product)
-            }
-        }
+    if (!products || products.length === 0) {
+        return res.status(404).json({ msg: 'No products found' })
     }
+
+    let result = await getProductStocks(products)
 
     return res.json({ msg: 'Products fetched', result })
 })
@@ -233,20 +222,13 @@ export const getOneProudct = asyncHandler(async (req, res, next) => {
 
     let product = await productModel.findById(ProductID).lean()
 
-    let stock = await stockModel.find({ productId: product._id })
+    if(!product) {
+        return next(new Error('Product not found', { cause: 404 }))
+    }
 
-        let last = []
-
-        if (stock.length != 0) {
-
-            for (const s of stock) {
-                product.quantity = s.quantity
-                product.color = s.color
-                product.size = s.size
-
-                last.push(product)
-            }
-        }
+    let last = await getProductStocks([product])
+    console.log("last", last)
+    
 
     return res.json({ msg: 'Product fetched', last })
 })
@@ -270,5 +252,15 @@ export const deleteProudct = asyncHandler(async (req, res, next) => {
     await cloudinary.api.delete_folder(`Takbeer/category/${Product.category.customId}/products/${Product.customId}`)
 
     return res.json({ msg: 'Product deleted', Product })
+})
+
+
+export const getNewArrival = asyncHandler(async (req, res, next) => {
+    let products = await productModel.find().sort({ updatedAt: -1 }).limit(10).lean()
+
+    let result = await getProductStocks(products)
+    
+
+    return res.json({ msg: 'New arrivals fetched', result })
 })
 

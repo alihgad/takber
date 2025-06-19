@@ -8,14 +8,15 @@ export const createProudctSchema = {
         price : joi.number().required(),
         discount : joi.number().max(100),
         category: glopalSchema.id,
-    }),
+        brand : joi.string().required()
+    }).required(),
 
     headers: glopalSchema.headers.required(),
 
     files: joi.object({
         image:joi.array().items(glopalSchema.file).required(),
         images: joi.array().items(glopalSchema.file).required()
-    }) 
+    }).required() 
 } 
 
 export const changePhotoSchema = {

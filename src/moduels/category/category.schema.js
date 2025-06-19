@@ -7,6 +7,7 @@ export let createCategory = {
         image: glopalSchema.file,
 
     }),
+    file: glopalSchema.file.required(),
     headers: glopalSchema.headers.required(),
 }
 

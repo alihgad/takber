@@ -1,7 +1,7 @@
 import { asyncHandler } from "../utils/ErrorHandling.js"
 
 export const roleOptions={
-    user:'user',
+    dataEntry:'dataEntry',
     admin:'admin'
 }
 

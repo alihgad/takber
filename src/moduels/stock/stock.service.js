@@ -26,6 +26,39 @@ export let addStock = async (req, res, next) => {
     return res.json({ msg: 'Stock added', stock })
 }
 
+export let addManyStocks = async (req, res, next) => {
+    
+    if(req.body.length == 0){
+        return next(new Error('Stocks are required', { cause: 400 }))
+    }
+
+    if(!Array.isArray(req.body)){
+        return next(new Error('Stocks must be an array', { cause: 400 }))
+    }
+
+    for (const stock of req.body) {
+        if (!stock.quantity) {
+            return next(new Error('Quantity is required', { cause: 400 }))
+        }
+        if (!stock.color) {
+            return next(new Error('Color is required', { cause: 400 }))
+        }
+        if (!stock.size) {
+            return next(new Error('Size is required', { cause: 400 }))
+        }
+
+        stock.productId = req.params.productId
+
+    }
+
+
+
+    let stock = await stockModel.insertMany(req.body)
+
+
+    return res.json({ msg: 'Stock added', stock })
+}
+
 export let getProductStock = async (req, res, next) => {
     let stocks = await stockModel.find({ productId: req.params.productId })
     if (stocks.length == 0) {

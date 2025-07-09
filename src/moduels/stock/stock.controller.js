@@ -10,6 +10,7 @@ let stockRouter = Router()
 
 
 stockRouter.get("/:productId",validation(ss.getStockSchema),asyncHandler(sc.getProductStock))
+stockRouter.post("/many/:productId",authentication,authorization(["admin"]),validation(ss.createManyStockSchema),asyncHandler(sc.addManyStocks))
 stockRouter.post("/:productId",authentication,authorization(["admin"]),validation(ss.createStockSchema),asyncHandler(sc.addStock))
 stockRouter.put("/:productId/:stockId",validation(ss.updateStockSchema),asyncHandler(sc.updateProductStock))
 

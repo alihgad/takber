@@ -212,7 +212,7 @@ export const getfullProudcts = asyncHandler(async (req, res, next) => {
     
 
     
-        let products = await productModel.find().lean()
+    let products = await productModel.find().lean()
     
 
 
@@ -221,7 +221,7 @@ export const getfullProudcts = asyncHandler(async (req, res, next) => {
         return res.status(404).json({ msg: 'No products found' })
     }
 
-    let result = await getProductStocks(products)
+    let result = await getProductStocks(products , filter)
 
     return res.json({ msg: 'Products fetched', result })
 })

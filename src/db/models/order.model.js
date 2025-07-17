@@ -9,7 +9,7 @@ let orderSchema = new mongoose.Schema({
         default: null
     },
     products: [{
-        prodectId: {
+        productId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "Product",
             required: true
@@ -33,9 +33,9 @@ let orderSchema = new mongoose.Schema({
     status: {
         type: String,
         default: "pending",
-        enum: ["pending", "shipped", "delivered"]
+        enum: ["pending", "shipped", "delivered", "cancelled"]
     },
-    proccesd_by:{
+    processed_by:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         default: null
@@ -56,7 +56,7 @@ let orderSchema = new mongoose.Schema({
     },
     cart:[
         {
-            prodectId: {
+            productId: {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "Product",
                 required: true

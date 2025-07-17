@@ -10,15 +10,133 @@ const productRouter = Router()
 
 import * as ps from "./product.service.js";
 
+/**
+ * @api {post} /product Create new product (Admin)
+ * @apiName CreateProduct
+ * @apiGroup Products
+ * @apiDescription Create a new product with images (Admin only)
+ * @apiHeader {String} Authorization Bearer token for authentication
+ * @apiBody {String} title Product title (3-10 characters)
+ * @apiBody {String} slug Product slug (unique)
+ * @apiBody {String} customId Product custom ID (unique)
+ * @apiBody {String} description Product description
+ * @apiBody {Number} price Product price (minimum: 0)
+ * @apiBody {String} category Category ID reference
+ * @apiBody {String} brand Product brand
+ * @apiBody {File} image Main product image
+ * @apiBody {File[]} images Additional product images (max 6)
+ * @apiSuccess {Object} product Created product object
+ * @apiError {String} message Error message if validation fails or duplicate data
+ */
 productRouter.post('/', authentication, authorization([roleOptions.admin]), multerHost("image").fields([{ name: 'image', maxCount: 1 }, { name: "images", maxCount: 6 }]), validation(productSchema.createProudctSchema), ps.createProduct)
-productRouter.delete('/:ProductID', validation(productSchema.deleteProudctSchema), authentication, authorization([roleOptions.admin]), ps.deleteProudct)
-productRouter.put('/changePhoto/:ProductID', authentication, authorization([roleOptions.admin]), multerHost("image").single("image"), validation(productSchema.changePhotoSchema), ps.changePhoto)
-productRouter.put('/:ProductID', authentication, authorization([roleOptions.admin]), validation(productSchema.updateProudctSchema), ps.updateProduct)
-productRouter.get('/', ps.getProudcts)
-productRouter.get('/fullProduct', ps.getfullProudcts)
-productRouter.get("/newArrival", ps.getNewArrival)
-productRouter.get("/hotDeals", ps.gethotDeals)
-productRouter.get('/:ProductID', validation(productSchema.getOneProudctSchema), ps.getOneProudct)
 
+/**
+ * @api {delete} /product/:ProductID Delete product (Admin)
+ * @apiName DeleteProduct
+ * @apiGroup Products
+ * @apiDescription Delete a product and its associated stock (Admin only)
+ * @apiHeader {String} Authorization Bearer token for authentication
+ * @apiParam {String} ProductID Product unique identifier
+ * @apiSuccess {String} message Success message
+ * @apiError {String} message Error message if product not found
+ */
+productRouter.delete('/:ProductID', validation(productSchema.deleteProudctSchema), authentication, authorization([roleOptions.admin]), ps.deleteProudct)
+
+/**
+ * @api {put} /product/changePhoto/:ProductID Change product photo (Admin)
+ * @apiName ChangeProductPhoto
+ * @apiGroup Products
+ * @apiDescription Update product's main image (Admin only)
+ * @apiHeader {String} Authorization Bearer token for authentication
+ * @apiParam {String} ProductID Product unique identifier
+ * @apiBody {File} image New product image
+ * @apiSuccess {String} message Success message
+ * @apiSuccess {Object} product Updated product object
+ * @apiError {String} message Error message if product not found or image upload fails
+ */
+productRouter.put('/changePhoto/:ProductID', authentication, authorization([roleOptions.admin]), multerHost("image").single("image"), validation(productSchema.changePhotoSchema), ps.changePhoto)
+
+/**
+ * @api {put} /product/:ProductID Update product (Admin)
+ * @apiName UpdateProduct
+ * @apiGroup Products
+ * @apiDescription Update product information (Admin only)
+ * @apiHeader {String} Authorization Bearer token for authentication
+ * @apiParam {String} ProductID Product unique identifier
+ * @apiBody {String} [title] New product title
+ * @apiBody {String} [slug] New product slug
+ * @apiBody {String} [description] New product description
+ * @apiBody {Number} [price] New product price
+ * @apiBody {String} [category] New category ID
+ * @apiBody {String} [brand] New product brand
+ * @apiBody {Boolean} [isDiscounted] Discount status
+ * @apiBody {Number} [discount] Discount percentage
+ * @apiSuccess {String} message Success message
+ * @apiSuccess {Object} product Updated product object
+ * @apiError {String} message Error message if product not found
+ */
+productRouter.put('/:ProductID', authentication, authorization([roleOptions.admin]), validation(productSchema.updateProudctSchema), ps.updateProduct)
+
+/**
+ * @api {get} /product Get all products
+ * @apiName GetProducts
+ * @apiGroup Products
+ * @apiDescription Retrieve all products with basic information
+ * @apiSuccess {Array} products Array of product objects
+ * @apiSuccess {String} products[].title Product title
+ * @apiSuccess {String} products[].slug Product slug
+ * @apiSuccess {Object} products[].image Product main image
+ * @apiSuccess {Number} products[].price Product price
+ * @apiSuccess {String} products[].brand Product brand
+ */
+productRouter.get('/', ps.getProudcts)
+
+/**
+ * @api {get} /product/fullProduct Get full product details
+ * @apiName GetFullProducts
+ * @apiGroup Products
+ * @apiDescription Retrieve all products with complete details including category and stock
+ * @apiSuccess {Array} products Array of products with full details
+ * @apiSuccess {Object} products[].category Category information
+ * @apiSuccess {Array} products[].stock Stock information for different variants
+ */
+productRouter.get('/fullProduct', ps.getfullProudcts)
+
+/**
+ * @api {get} /product/newArrival Get new arrival products
+ * @apiName GetNewArrival
+ * @apiGroup Products
+ * @apiDescription Retrieve recently added products
+ * @apiSuccess {Array} products Array of new arrival products
+ * @apiSuccess {Date} products[].createdAt Product creation date
+ */
+productRouter.get("/newArrival", ps.getNewArrival)
+
+/**
+ * @api {get} /product/hotDeals Get hot deals products
+ * @apiName GetHotDeals
+ * @apiGroup Products
+ * @apiDescription Retrieve products with active discounts
+ * @apiSuccess {Array} products Array of discounted products
+ * @apiSuccess {Number} products[].discount Discount percentage
+ * @apiSuccess {Boolean} products[].isDiscounted Discount status
+ */
+productRouter.get("/hotDeals", ps.gethotDeals)
+
+/**
+ * @api {get} /product/:ProductID Get single product
+ * @apiName GetOneProduct
+ * @apiGroup Products
+ * @apiDescription Retrieve detailed information about a specific product
+ * @apiParam {String} ProductID Product unique identifier
+ * @apiSuccess {Object} product Product details with category and stock information
+ * @apiSuccess {String} product.title Product title
+ * @apiSuccess {String} product.description Product description
+ * @apiSuccess {Array} product.images Product images array
+ * @apiSuccess {Object} product.category Category details
+ * @apiSuccess {Array} product.stock Stock variants (color, size, quantity)
+ * @apiError {String} message Error message if product not found
+ */
+productRouter.get('/:ProductID', validation(productSchema.getOneProudctSchema), ps.getOneProudct)
 
 export default productRouter

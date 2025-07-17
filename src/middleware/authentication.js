@@ -13,7 +13,6 @@ const authentication= asyncHandler(
         
         if(!token){
             return next(new Error('Token not found',{cause:401}))
-
         }
 
      let x = jwt.verify(token,process.env.SECRET_KEY )

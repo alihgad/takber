@@ -6,7 +6,7 @@ import { v2 as cloudinary } from "cloudinary";
 import categoryModel from "../../db/models/category.model.js";
 import subcategoryModel from "../../db/models/subcategory.model.js";
 import { getProductStocks } from "../../utils/productStocks.js";
-import e from "express";
+
 
 export const createProduct = asyncHandler(async (req, res, next) => {
 

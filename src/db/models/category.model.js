@@ -6,19 +6,36 @@ import { v2 as cloudinary } from "cloudinary";
 
 let categorySchema = new mongoose.Schema({
     title: {
-        type: String,
-        required: true,
-        trim: true,
-        lowercase: true,
-        unique: true,
-        min: 3,
-        max: 10
+        arabic: {
+            type: String,
+            required: true,
+            unique: true,
+            min: 3,
+            max: 10
+        },
+        english: {
+            type: String,
+            required: true,
+            unique: true,
+            min: 3,
+            max: 10
+        }
     },
     slug: {
-        type: String,
-        required: true,
-        lowercase: true,
-        unique: true
+        arabic: {
+            type: String,
+            required: true,
+            unique: true,
+            min: 3,
+            max: 10
+        },
+        english: {
+            type: String,
+            required: true,
+            unique: true,
+            min: 3,
+            max: 10
+        }
     },
     image:{
         secure_url: {

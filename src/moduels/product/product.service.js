@@ -208,31 +208,41 @@ export const changePhoto = asyncHandler(async (req, res, next) => {
 
 
 export const getfullProudcts = asyncHandler(async (req, res, next) => {
-    let { filter } = req.query
-    
+    let { brand , category } = req.query
+
+    let query = {}
+
+    if(brand){
+        query.brand = brand
+    }
+
+    if(category){
+        query.category = category
+    }
 
     
-    let products = await productModel.find().lean()
+    let products = await productModel.find(query).lean()
     
-
-
 
     if (!products || products.length === 0) {
         return res.status(404).json({ msg: 'No products found' })
     }
 
-    let result = await getProductStocks(products , filter)
+    let result = await getProductStocks(products , req.query)
 
     return res.json({ msg: 'Products fetched', result })
 })
 
 export const getProudcts = asyncHandler(async (req, res, next) => {
     let filter = {}
+
     if(req.quey.category){
         filter.categoryId = req.quey.category
     }
+
    
-    
+
+ 
     let products = await productModel.find(filter).lean().select("title image _id price subPrice isDiscounted discount  ")
     
 

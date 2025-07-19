@@ -81,6 +81,13 @@ let productSchema = new mongoose.Schema({
         required: true,
         min: 0
     },
+    finalPrice: {
+        type: Number,
+        default: function() {
+            return this.price || 0;
+        },
+        min: 0
+    },
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Category",
@@ -111,6 +118,37 @@ let productSchema = new mongoose.Schema({
         versionKey: false
     })
 
+// Middleware لحساب السعر النهائي قبل الحفظ
+productSchema.pre('save', function(next) {
+    // تحديث isDiscounted بناءً على قيمة discount
+    this.isDiscounted = this.discount > 0;
+    
+    // حساب السعر النهائي
+    if (this.isDiscounted) {
+        this.finalPrice = this.price - (this.price * (this.discount / 100));
+    } else {
+        this.finalPrice = this.price;
+    }
+    next();
+});
+
+// Middleware لحساب السعر النهائي قبل التحديث
+productSchema.pre('findOneAndUpdate', function(next) {
+    const update = this.getUpdate();
+    
+    // تحديث isDiscounted بناءً على قيمة discount
+    if (update.discount !== undefined) {
+        update.isDiscounted = update.discount > 0;
+    }
+    
+    // حساب السعر النهائي
+    if (update.isDiscounted && update.discount > 0) {
+        update.finalPrice = update.price - (update.price * (update.discount / 100));
+    } else if (update.price !== undefined) {
+        update.finalPrice = update.price;
+    }
+    next();
+});
 
 
 const deleting = async (doc) => {

@@ -2,11 +2,11 @@ import stockModel from "../db/models/stock.model.js";
 
 
 
-export const getProductStocks = async (products , filter = null) => {
+export const getProductStocks = async (products , filter = {}) => {
     if (!Array.isArray(products)) {
         products = [products];
     }
-    let {color , size , brand} = filter
+    let {color , size } = filter
 
     let result = []
 

@@ -3,7 +3,7 @@ import cartModel from "../../db/models/cart.model.js"
 import couponModel from "../../db/models/coupon.model.js"
 import stockModel from "../../db/models/stock.model.js"
 import productModel from "../../db/models/product.model.js"
-import mongoose from "mongoose"
+// import mongoose from "mongoose"
 import categoryModel from "../../db/models/category.model.js"
 
 // Create new order from cart

@@ -227,10 +227,13 @@ export const getfullProudcts = asyncHandler(async (req, res, next) => {
 })
 
 export const getProudcts = asyncHandler(async (req, res, next) => {
+    let filter = {}
+    if(req.quey.category){
+        filter.categoryId = req.quey.category
+    }
+   
     
- 
-    
-    let products = await productModel.find().lean().select("title image _id price subPrice isDiscounted discount  ")
+    let products = await productModel.find(filter).lean().select("title image _id price subPrice isDiscounted discount  ")
     
 
     if (!products || products.length === 0) {

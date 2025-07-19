@@ -1,10 +1,10 @@
-import { Route } from "express";
+import { Router } from "express";
 import * as ws from "./whisList.service.js"
-import { asyncHandler } from "../../utils/ErrorHandling";
+import { asyncHandler } from "../../utils/ErrorHandling.js";
 import validation from "../../middleware/validation.js";
 import authentication from "../../middleware/authentication.js";
 import { addToWhishList , moveToCart , removeFromWhishList , getWhishList } from "./whisList.service.js";
-let whisListRoute = Route()
+let whisListRoute = Router()
 
 /**
  * @api {get} /wishlist Get user's wishlist

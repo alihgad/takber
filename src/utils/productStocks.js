@@ -14,20 +14,20 @@ export const getProductStocks = async (products , filter = {}) => {
 
         let stock = await stockModel.find({ productId: product._id })
 
-        if(brand && product.brand != brand){
-            continue
-        }
+        // if (brand && product.brand != brand) {
+        //     continue
+        // }
 
         if (stock.length != 0) {
 
             for (const s of stock) {
-                if(color && s.color != color){
+                if (color && s.color != color) {
                     continue
                 }
-                if(size && s.size != size){
+                if (size && s.size != size) {
                     continue
                 }
-                
+
                 product.quantity = s.quantity
                 product.color = s.color
                 product.size = s.size

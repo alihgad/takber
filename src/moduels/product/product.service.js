@@ -4,12 +4,13 @@ import { asyncHandler } from "../../utils/ErrorHandling.js";
 import productModel from "./../../db/models/product.model.js";
 import { v2 as cloudinary } from "cloudinary";
 import categoryModel from "../../db/models/category.model.js";
+import subcategoryModel from "../../db/models/subcategory.model.js";
 import { getProductStocks } from "../../utils/productStocks.js";
 import e from "express";
 
 export const createProduct = asyncHandler(async (req, res, next) => {
 
-    const { title, description, price, discount, category, brand } = req.body
+    const { title, description, price, discount, category, subcategory, brand } = req.body
 
 
 
@@ -21,6 +22,17 @@ export const createProduct = asyncHandler(async (req, res, next) => {
     let cat = await categoryModel.findById(category)
     if (!cat) {
         next(new Error('Category not found', { cause: 404 }))
+    }
+    
+    if (subcategory) {
+        let subcat = await subcategoryModel.findById(subcategory)
+        if (!subcat) {
+            return next(new Error('Subcategory not found', { cause: 404 }))
+        }
+        
+        if (subcat.category.toString() !== category) {
+            return next(new Error('Subcategory does not belong to the specified category', { cause: 400 }))
+        }
     }
 
     let customId = nanoid(5)
@@ -64,6 +76,7 @@ export const createProduct = asyncHandler(async (req, res, next) => {
         images: data,
         customId,
         category,
+        subcategory: subcategory || null,
         brand,
         createdBy: req.user._id
     })
@@ -75,7 +88,7 @@ export const createProduct = asyncHandler(async (req, res, next) => {
 
 
 export const updateProduct = asyncHandler(async (req, res, next) => {
-    const { title, stock, description, price, discount } = req.body
+    const { title, stock, description, price, discount, category, subcategory } = req.body
     const { ProductID } = req.params
 
 
@@ -116,6 +129,39 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
     if (price) {
         product.price = price
         product.subPrice = discount ? price - (discount / 100 * price) : price
+    }
+    
+    // Update category if provided
+    if (category) {
+        let cat = await categoryModel.findById(category)
+        if (!cat) {
+            return next(new Error('Category not found', { cause: 404 }))
+        }
+        product.category = category
+        
+        // If category changes, remove subcategory unless a new one is provided
+        if (product.category.toString() !== category && !subcategory) {
+            product.subcategory = null
+        }
+    }
+    
+    // Update subcategory if provided
+    if (subcategory) {
+        let subcat = await subcategoryModel.findById(subcategory)
+        if (!subcat) {
+            return next(new Error('Subcategory not found', { cause: 404 }))
+        }
+        
+        // Check if subcategory belongs to the product's category
+        const categoryToCheck = category || product.category.toString()
+        if (subcat.category.toString() !== categoryToCheck) {
+            return next(new Error('Subcategory does not belong to the specified category', { cause: 400 }))
+        }
+        
+        product.subcategory = subcategory
+    } else if (subcategory === null) {
+        // Allow explicitly setting subcategory to null
+        product.subcategory = null
     }
 
 
@@ -210,9 +256,17 @@ export const changePhoto = asyncHandler(async (req, res, next) => {
 export const getfullProudcts = asyncHandler(async (req, res, next) => {
     let { filter } = req.query
     
-
+    // Build filter object
+    let filterObj = {}
+    if (filter) {
+        try {
+            filterObj = JSON.parse(filter)
+        } catch (error) {
+            console.error('Error parsing filter:', error)
+        }
+    }
     
-    let products = await productModel.find().lean()
+    let products = await productModel.find(filterObj).populate(['category', 'subcategory']).lean()
     
 
 
@@ -228,12 +282,16 @@ export const getfullProudcts = asyncHandler(async (req, res, next) => {
 
 export const getProudcts = asyncHandler(async (req, res, next) => {
     let filter = {}
-    if(req.quey.category){
-        filter.categoryId = req.quey.category
+    if(req.query.category){
+        filter.category = req.query.category
+    }
+    
+    if(req.query.subcategory){
+        filter.subcategory = req.query.subcategory
     }
    
     
-    let products = await productModel.find(filter).lean().select("title image _id price subPrice isDiscounted discount  ")
+    let products = await productModel.find(filter).populate(['category', 'subcategory']).lean().select("title image _id price subPrice isDiscounted discount subcategory category")
     
 
     if (!products || products.length === 0) {
@@ -247,7 +305,7 @@ export const getProudcts = asyncHandler(async (req, res, next) => {
 export const getOneProudct = asyncHandler(async (req, res, next) => {
     let { ProductID } = req.params
 
-    let product = await productModel.findById(ProductID).lean()
+    let product = await productModel.findById(ProductID).populate(['category', 'subcategory']).lean()
 
     if (!product) {
         return next(new Error('Product not found', { cause: 404 }))
@@ -281,7 +339,7 @@ export const deleteProudct = asyncHandler(async (req, res, next) => {
 
 
 export const getNewArrival = asyncHandler(async (req, res, next) => {
-    let products = await productModel.find().sort({ updatedAt: -1 }).limit(10).lean()
+    let products = await productModel.find().sort({ updatedAt: -1 }).limit(10).populate(['category', 'subcategory']).lean()
 
     let result = await getProductStocks(products)
 
@@ -291,7 +349,7 @@ export const getNewArrival = asyncHandler(async (req, res, next) => {
 
 
 export const gethotDeals = asyncHandler(async (req, res, next) => {
-    let products = await productModel.find({ isDiscounted: true }).sort({ discount: -1 }).limit(10).lean()
+    let products = await productModel.find({ isDiscounted: true }).sort({ discount: -1 }).limit(10).populate(['category', 'subcategory']).lean()
 
     let result = await getProductStocks(products)
 

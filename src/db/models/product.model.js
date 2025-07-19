@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import stockModel from "./stock.model.js";
 import { v2 as cloudinary } from "cloudinary";
 import categoryModel from "./category.model.js";
+import subcategoryModel from "./subcategory.model.js";
 
 
 
@@ -63,6 +64,11 @@ let productSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "Category",
         required: true
+    },
+    subcategory: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Subcategory",
+        required: false
     },
     isDiscounted: {
         type: Boolean,

@@ -1,0 +1,187 @@
+{
+	"info": {
+		"_postman_id": "categories-collection",
+		"name": "Categories",
+		"description": "Categories APIs for Takbeer e-commerce platform",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get All Categories",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/category",
+					"host": ["{{base_url}}"],
+					"path": ["category"]
+				}
+			}
+		},
+		{
+			"name": "Get Category by ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/category/{{category_id}}",
+					"host": ["{{base_url}}"],
+					"path": ["category", "{{category_id}}"]
+				}
+			}
+		},
+		{
+			"name": "Create Category (Admin/Data Entry)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "الإلكترونيات",
+							"type": "text"
+						},
+						{
+							"key": "titleEn",
+							"value": "Electronics",
+							"type": "text"
+						},
+						{
+							"key": "slug",
+							"value": "electronics",
+							"type": "text"
+						},
+						{
+							"key": "slugEn",
+							"value": "electronics",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "جميع الأجهزة الإلكترونية الحديثة",
+							"type": "text"
+						},
+						{
+							"key": "descriptionEn",
+							"value": "All modern electronic devices",
+							"type": "text"
+						},
+						{
+							"key": "image",
+							"type": "file",
+							"src": []
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/category",
+					"host": ["{{base_url}}"],
+					"path": ["category"]
+				}
+			}
+		},
+		{
+			"name": "Update Category (Admin/Data Entry)",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "الإلكترونيات المحدثة",
+							"type": "text"
+						},
+						{
+							"key": "titleEn",
+							"value": "Updated Electronics",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "أحدث الأجهزة الإلكترونية",
+							"type": "text"
+						},
+						{
+							"key": "descriptionEn",
+							"value": "Latest electronic devices",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/category/{{category_id}}",
+					"host": ["{{base_url}}"],
+					"path": ["category", "{{category_id}}"]
+				}
+			}
+		},
+		{
+			"name": "Delete Category (Admin Only)",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/category/{{category_id}}",
+					"host": ["{{base_url}}"],
+					"path": ["category", "{{category_id}}"]
+				}
+			}
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "admin_token",
+			"value": "your_admin_jwt_token_here",
+			"type": "string"
+		},
+		{
+			"key": "category_id",
+			"value": "category_id_from_response",
+			"type": "string"
+		}
+	]
+} 

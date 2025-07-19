@@ -15,8 +15,14 @@ export const createCategory = async (req, res, next) => {
     req.folder = `Takbeer/category/${customId}`
 
     let category = await categoryModel.create({
-        title: req.body.title,
-        slug: slugify(req.body.title),
+        title: {
+            arabic: req.body.title.arabic.toLowerCase(),
+            english: req.body.title.english.toLowerCase()
+        },
+        slug: {
+            arabic: slugify(req.body.title.arabic, { replacement: '-', lower: true }),
+            english: slugify(req.body.title.english, { replacement: '-', lower: true })
+        },
         image: {
             secure_url,
             public_id
@@ -45,21 +51,33 @@ export const updateCategory = async (req, res, next) => {
         await cloudinary.uploader.destroy(category.image.public_id)
 
         let { secure_url, public_id} = await cloudinary.uploader.upload(req.file.path, {
-            folder: `Takbeer/category/${customId}`
+            folder: `Takbeer/category/${category.customId}`
         })
 
-        category.secure_url = secure_url
-        category.public_id = public_id
-        req.folder = `Takbeer/category/${customId}`
+        category.image.secure_url = secure_url
+        category.image.public_id = public_id
+        req.folder = `Takbeer/category/${category.customId}`
     }
 
     if(title){
-        let exist = await categoryModel.findOne({ title: title })
-        if (exist && exist._id.toString() !== category._id.toString()) {
+        let exist = await categoryModel.findOne({ 
+            $or: [
+                { 'title.arabic': title.arabic.toLowerCase() },
+                { 'title.english': title.english.toLowerCase() }
+            ],
+            _id: { $ne: category._id }
+        })
+        if (exist) {
             return next(new Error('Category title already exists', { cause: 400 }))
         }
-        category.title = title
-        category.slug = slugify(title)
+        category.title = {
+            arabic: title.arabic.toLowerCase(),
+            english: title.english.toLowerCase()
+        }
+        category.slug = {
+            arabic: slugify(title.arabic, { replacement: '-', lower: true }),
+            english: slugify(title.english, { replacement: '-', lower: true })
+        }
     }
     
     category.save()

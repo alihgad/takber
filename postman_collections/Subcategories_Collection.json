@@ -1,0 +1,209 @@
+{
+	"info": {
+		"_postman_id": "subcategories-collection",
+		"name": "Subcategories",
+		"description": "Subcategories APIs for Takbeer e-commerce platform",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get All Subcategories",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/subcategory",
+					"host": ["{{base_url}}"],
+					"path": ["subcategory"]
+				}
+			}
+		},
+		{
+			"name": "Get Subcategories by Category",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/subcategory/category/{{category_id}}",
+					"host": ["{{base_url}}"],
+					"path": ["subcategory", "category", "{{category_id}}"]
+				}
+			}
+		},
+		{
+			"name": "Get Subcategory by ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/subcategory/{{subcategory_id}}",
+					"host": ["{{base_url}}"],
+					"path": ["subcategory", "{{subcategory_id}}"]
+				}
+			}
+		},
+		{
+			"name": "Create Subcategory (Admin/Data Entry)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "الهواتف الذكية",
+							"type": "text"
+						},
+						{
+							"key": "titleEn",
+							"value": "Smartphones",
+							"type": "text"
+						},
+						{
+							"key": "slug",
+							"value": "smartphones",
+							"type": "text"
+						},
+						{
+							"key": "slugEn",
+							"value": "smartphones",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "أحدث الهواتف الذكية",
+							"type": "text"
+						},
+						{
+							"key": "descriptionEn",
+							"value": "Latest smartphones",
+							"type": "text"
+						},
+						{
+							"key": "categoryId",
+							"value": "{{category_id}}",
+							"type": "text"
+						},
+						{
+							"key": "image",
+							"type": "file",
+							"src": []
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/subcategory",
+					"host": ["{{base_url}}"],
+					"path": ["subcategory"]
+				}
+			}
+		},
+		{
+			"name": "Update Subcategory (Admin/Data Entry)",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "الهواتف الذكية المحدثة",
+							"type": "text"
+						},
+						{
+							"key": "titleEn",
+							"value": "Updated Smartphones",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "أحدث الهواتف الذكية 2024",
+							"type": "text"
+						},
+						{
+							"key": "descriptionEn",
+							"value": "Latest smartphones 2024",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/subcategory/{{subcategory_id}}",
+					"host": ["{{base_url}}"],
+					"path": ["subcategory", "{{subcategory_id}}"]
+				}
+			}
+		},
+		{
+			"name": "Delete Subcategory (Admin Only)",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/subcategory/{{subcategory_id}}",
+					"host": ["{{base_url}}"],
+					"path": ["subcategory", "{{subcategory_id}}"]
+				}
+			}
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "admin_token",
+			"value": "your_admin_jwt_token_here",
+			"type": "string"
+		},
+		{
+			"key": "category_id",
+			"value": "category_id_from_response",
+			"type": "string"
+		},
+		{
+			"key": "subcategory_id",
+			"value": "subcategory_id_from_response",
+			"type": "string"
+		}
+	]
+} 

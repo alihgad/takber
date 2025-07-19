@@ -14,7 +14,7 @@ import * as ps from "./product.service.js";
  * @api {post} /product Create new product (Admin)
  * @apiName CreateProduct
  * @apiGroup Products
- * @apiDescription Create a new product with images (Admin only)
+ * @apiDescription Create a new product with images (Admin and Data Entry only)
  * @apiHeader {String} Authorization Bearer token for authentication
  * @apiBody {String} title Product title (3-10 characters)
  * @apiBody {String} slug Product slug (unique)
@@ -28,7 +28,7 @@ import * as ps from "./product.service.js";
  * @apiSuccess {Object} product Created product object
  * @apiError {String} message Error message if validation fails or duplicate data
  */
-productRouter.post('/', authentication, authorization([roleOptions.admin]), multerHost("image").fields([{ name: 'image', maxCount: 1 }, { name: "images", maxCount: 6 }]), validation(productSchema.createProudctSchema), ps.createProduct)
+productRouter.post('/', authentication, authorization([roleOptions.admin, roleOptions.dataEntry]), multerHost("image").fields([{ name: 'image', maxCount: 1 }, { name: "images", maxCount: 6 }]), validation(productSchema.createProudctSchema), ps.createProduct)
 
 /**
  * @api {delete} /product/:ProductID Delete product (Admin)
@@ -54,13 +54,13 @@ productRouter.delete('/:ProductID', validation(productSchema.deleteProudctSchema
  * @apiSuccess {Object} product Updated product object
  * @apiError {String} message Error message if product not found or image upload fails
  */
-productRouter.put('/changePhoto/:ProductID', authentication, authorization([roleOptions.admin]), multerHost("image").single("image"), validation(productSchema.changePhotoSchema), ps.changePhoto)
+productRouter.put('/changePhoto/:ProductID', authentication, authorization([roleOptions.admin , roleOptions.dataEntry]), multerHost("image").single("image"), validation(productSchema.changePhotoSchema), ps.changePhoto)
 
 /**
  * @api {put} /product/:ProductID Update product (Admin)
  * @apiName UpdateProduct
  * @apiGroup Products
- * @apiDescription Update product information (Admin only)
+ * @apiDescription Update product information (Admin and Data Entry only)
  * @apiHeader {String} Authorization Bearer token for authentication
  * @apiParam {String} ProductID Product unique identifier
  * @apiBody {String} [title] New product title
@@ -75,7 +75,7 @@ productRouter.put('/changePhoto/:ProductID', authentication, authorization([role
  * @apiSuccess {Object} product Updated product object
  * @apiError {String} message Error message if product not found
  */
-productRouter.put('/:ProductID', authentication, authorization([roleOptions.admin]), validation(productSchema.updateProudctSchema), ps.updateProduct)
+productRouter.put('/:ProductID', authentication, authorization([roleOptions.admin, roleOptions.dataEntry]), validation(productSchema.updateProudctSchema), ps.updateProduct)
 
 /**
  * @api {get} /product Get all products

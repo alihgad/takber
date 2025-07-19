@@ -12,9 +12,13 @@ export const createProduct = asyncHandler(async (req, res, next) => {
 
     const { title, description, price, discount, category, subcategory, brand } = req.body
 
-
-
-    let titleExist = await productModel.findOne({ title: title.toLowerCase() })
+    // Check if title exists (check both arabic and english)
+    let titleExist = await productModel.findOne({ 
+        $or: [
+            { 'title.arabic': title.arabic.toLowerCase() },
+            { 'title.english': title.english.toLowerCase() }
+        ]
+    })
     if (titleExist) {
         next(new Error('product title already exists', { cause: 400 }))
     }
@@ -64,20 +68,26 @@ export const createProduct = asyncHandler(async (req, res, next) => {
 
 
     let product = await productModel.create({
-        title,
-        slug: slugify(title, { replacement: '-', lower: true }),
-        description,
+        title: {
+            arabic: title.arabic.toLowerCase(),
+            english: title.english.toLowerCase()
+        },
+        slug: {
+            arabic: slugify(title.arabic, { replacement: '-', lower: true }),
+            english: slugify(title.english, { replacement: '-', lower: true })
+        },
+        description: {
+            arabic: description.arabic,
+            english: description.english
+        },
         price,
-        subPrice: discount ? price - (discount / 100 * price) : price,
-        isDiscounted: discount ? true : false,
-        discount: discount ? discount : 0,
+        discount: discount || 0,
         customId,
         image: { secure_url, public_id },
         images: data,
-        customId,
         category,
         subcategory: subcategory || null,
-        brand,
+        brand: brand.toLowerCase(),
         createdBy: req.user._id
     })
 
@@ -100,15 +110,27 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
 
 
     if (title) {
-        let titleExist = await productModel.findOne({ title: title.toLowerCase() })
+        // Check if title exists (check both arabic and english)
+        let titleExist = await productModel.findOne({ 
+            $or: [
+                { 'title.arabic': title.arabic.toLowerCase() },
+                { 'title.english': title.english.toLowerCase() }
+            ],
+            _id: { $ne: ProductID } // Exclude current product
+        })
 
         if (titleExist) {
-
             next(new Error('product title already exists', { cause: 400 }))
         }
 
-        product.title = title.toLowerCase()
-        product.slug = slugify(title, { replacement: '-', lower: true })
+        product.title = {
+            arabic: title.arabic.toLowerCase(),
+            english: title.english.toLowerCase()
+        }
+        product.slug = {
+            arabic: slugify(title.arabic, { replacement: '-', lower: true }),
+            english: slugify(title.english, { replacement: '-', lower: true })
+        }
     }
 
 
@@ -118,17 +140,18 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
     }
 
     if (description) {
-        product.description = description
+        product.description = {
+            arabic: description.arabic,
+            english: description.english
+        }
     }
 
-    if (discount) {
+    if (discount !== undefined) {
         product.discount = discount
-        product.isDiscounted = true
     }
 
     if (price) {
         product.price = price
-        product.subPrice = discount ? price - (discount / 100 * price) : price
     }
 
     // Update category if provided
@@ -282,16 +305,13 @@ export const getfullProudcts = asyncHandler(async (req, res, next) => {
 export const getProudcts = asyncHandler(async (req, res, next) => {
     let filter = {}
 
-    if (req.quey.category) {
-        filter.categoryId = req.quey.category
-        if (req.query.category) {
-            filter.category = req.query.category
-        }
+    if (req.query.category) {
+        filter.category = req.query.category
 
 
 
 
-        let products = await productModel.find(filter).populate('category', 'title slug').lean().select("title image _id price subPrice isDiscounted discount  ")
+        let products = await productModel.find(filter).populate('category', 'title.arabic title.english slug.arabic slug.english').lean().select("title image _id price finalPrice isDiscounted discount  ")
 
         if (req.query.subcategory) {
             filter.subcategory = req.query.subcategory

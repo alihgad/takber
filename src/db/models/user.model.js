@@ -26,11 +26,7 @@ let userSchema = new mongoose.Schema({
     role: {
         type: String,
         default: "user",
-        enum: ["user", "admin"]
-    },
-    Verfied: {
-        type: Boolean,
-        default: false
+        enum: ["user", "admin" , "dataEntery"]
     },
     phoneNumbers:[
         {

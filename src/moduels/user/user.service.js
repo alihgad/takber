@@ -24,22 +24,6 @@ export let signUp = async (req, res) => {
 
     let user = await userModel.create(req.body)
 
-    let token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, { expiresIn: "1d" })
-
-    let x = await sendEmail(
-        email,
-        "Takbeer Email Verification",
-        emailTemplate("Takbeer Email Verification", name, `
-            <p>Welcome to <b>Takbeer</b></p>
-            <p>Please verify your email</p>
-           <a href="${req.protocol}://${req.headers.host}/user/verify/${token}">Click here </a>
-          `)
-    );
-
-    if (!x) {
-        return res.status(400).json({ message: "Email Not Sent" })
-    }
-
 
 
 
@@ -203,6 +187,67 @@ export let profile = async (req, res, next) => {
 export let getAll = async (req, res, next) => {
     let users = await userModel.find().select("-password -_id -__v")
     return res.status(201).json({ message: "done", users })
+}
+
+export let createUser = async (req, res, next) => {
+    let { phoneNumbers, email, name, password, role } = req.body
+
+    // التحقق من وجود البريد الإلكتروني
+    if (!email) {
+        return res.status(400).json({ message: "Email is required" })
+    }
+
+    // التحقق من عدم تكرار البريد الإلكتروني
+    let ifEmailD = await userModel.findOne({ email })
+    if (ifEmailD) {
+        return res.status(400).json({ message: "Email already exists" })
+    }
+
+    // التحقق من وجود الاسم
+    if (!name) {
+        return res.status(400).json({ message: "Name is required" })
+    }
+
+    // التحقق من وجود كلمة المرور
+    if (!password) {
+        return res.status(400).json({ message: "Password is required" })
+    }
+
+    // التحقق من أرقام الهاتف إذا تم تمريرها
+    if (phoneNumbers) {
+        for (let i = 0; i < phoneNumbers.length; i++) {
+            let ifPhoneD = await userModel.findOne({ phoneNumbers: phoneNumbers[i] })
+            if (ifPhoneD) {
+                return res.status(400).json({ message: "Phone number already exists" })
+            }
+        }
+    }
+
+    if(!role){
+        return res.status(400).json({ message: "Role is required" })
+    }
+
+    // إنشاء المستخدم الجديد
+    let userData = {
+        email,
+        name,
+        password,
+        phoneNumbers: phoneNumbers || [],
+        role: role ,
+        Verfied: true, // المستخدم الذي ينشئه المدير يكون مؤكد تلقائياً
+        provider: 'local'
+    }
+
+    let user = await userModel.create(userData)
+
+    // إرجاع بيانات المستخدم بدون كلمة المرور
+    let userResponse = user.toObject()
+    delete userResponse.password
+
+    return res.status(201).json({ 
+        message: "User created successfully", 
+        user: userResponse 
+    })
 }
 
 

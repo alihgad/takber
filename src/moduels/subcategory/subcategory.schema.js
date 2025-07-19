@@ -3,7 +3,10 @@ import glopalSchema from "../../services/glopalSchema.js";
 
 export let createSubcategory = {
     body: Joi.object({
-        title: Joi.string().required(),
+        title: Joi.object({
+            arabic: Joi.string().required().min(3).max(10),
+            english: Joi.string().required().min(3).max(10)
+        }).required(),
         categoryId: Joi.string().required()
     }),
     file: glopalSchema.file.required(),
@@ -11,7 +14,10 @@ export let createSubcategory = {
 
 export let updateSubcategory = {
     body: Joi.object({
-        title: Joi.string(),
+        title: Joi.object({
+            arabic: Joi.string().min(3).max(10),
+            english: Joi.string().min(3).max(10)
+        }),
         categoryId: Joi.string(),
     }),
     params: Joi.object({

@@ -1,0 +1,131 @@
+{
+	"info": {
+		"_postman_id": "coupons-collection",
+		"name": "Coupons",
+		"description": "Coupons APIs for Takbeer e-commerce platform",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get All Coupons (Admin)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/coupon",
+					"host": ["{{base_url}}"],
+					"path": ["coupon"]
+				}
+			}
+		},
+		{
+			"name": "Create Coupon (Admin)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"code\": \"SAVE20\",\n  \"discountPercentage\": 20,\n  \"expiryDate\": \"2024-12-31\",\n  \"maxUsage\": 100,\n  \"minOrderAmount\": 1000\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/coupon",
+					"host": ["{{base_url}}"],
+					"path": ["coupon"]
+				}
+			}
+		},
+		{
+			"name": "Update Coupon (Admin)",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"discountPercentage\": 25,\n  \"maxUsage\": 150\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/coupon/{{coupon_id}}",
+					"host": ["{{base_url}}"],
+					"path": ["coupon", "{{coupon_id}}"]
+				}
+			}
+		},
+		{
+			"name": "Delete Coupon (Admin)",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/coupon/{{coupon_id}}",
+					"host": ["{{base_url}}"],
+					"path": ["coupon", "{{coupon_id}}"]
+				}
+			}
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "admin_token",
+			"value": "your_admin_jwt_token_here",
+			"type": "string"
+		},
+		{
+			"key": "coupon_id",
+			"value": "coupon_id_from_response",
+			"type": "string"
+		}
+	]
+} 

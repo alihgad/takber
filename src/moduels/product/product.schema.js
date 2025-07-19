@@ -3,8 +3,14 @@ import glopalSchema from "../../services/glopalSchema.js"
 
 export const createProudctSchema = {
     body: joi.object({
-        title: joi.string().required(),
-        description: joi.string().required(),
+        title: joi.object({
+            arabic: joi.string().required().min(3).max(10),
+            english: joi.string().required().min(3).max(10)
+        }).required(),
+        description: joi.object({
+            arabic: joi.string().required(),
+            english: joi.string().required()
+        }).required(),
         price: joi.number().required(),
         discount: joi.number().max(100),
         category: glopalSchema.id,
@@ -37,8 +43,14 @@ export const changePhotoSchema = {
 
 export const updateProudctSchema = {
     body: joi.object({
-        title: joi.string(),
-        description: joi.string(),
+        title: joi.object({
+            arabic: joi.string().min(3).max(10),
+            english: joi.string().min(3).max(10)
+        }),
+        description: joi.object({
+            arabic: joi.string(),
+            english: joi.string()
+        }),
         price: joi.number(),
         discount: joi.number().max(100),
         category: glopalSchema.id,

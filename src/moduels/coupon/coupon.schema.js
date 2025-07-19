@@ -12,15 +12,14 @@ export let createCoupon = {
 
 export let updateCoupon = {
     body: Joi.object({
-        title: Joi.string(),
-        image: glopalSchema.file.required(),
-
+        code: Joi.string(),
+        discount: Joi.number(),
+        expireDate: Joi.date(),
     }),
     headers: glopalSchema.headers.required(),
     params: Joi.object({
         id: glopalSchema.id.required(),
     }),
-    headers: glopalSchema.headers.required(),
 }
 
 export let getCoupon={
@@ -28,13 +27,10 @@ export let getCoupon={
         id: glopalSchema.id.required(),
     }),
 }
-export let getCoupons={
-    header: glopalSchema.headers.required,
-}
+
 
 export let deleteCoupon={
     params: Joi.object({
         id: glopalSchema.id.required(),
-    }),
-    headers : glopalSchema.headers.required()
+    })
 }

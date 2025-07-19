@@ -49,6 +49,15 @@ let orderSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    city: {
+        type: String,
+        required: true
+    },
+    shippingAmount: {
+        type: Number,
+        required: true,
+        default: 0
+    },
     cartId:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Cart",

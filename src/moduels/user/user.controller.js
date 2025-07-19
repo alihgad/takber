@@ -2,7 +2,7 @@ import { Router } from "express";
 import { asyncHandler } from "../../utils/ErrorHandling.js";
 import * as us from "./user.service.js";
 import validation from "../../middleware/validation.js";
-import { deleteUserSchema, forgetPasswordSchema, getAllSchema, loginSchema, signUpSchema, updatePasswordSchema, updateUserSchema, verfiySchema } from "./user.schema.js";
+import { deleteUserSchema, forgetPasswordSchema, getAllSchema, loginSchema, signUpSchema, updatePasswordSchema, updateUserSchema, verfiySchema, createUserSchema } from "./user.schema.js";
 import authentication from "../../middleware/authentication.js";
 import authorization from "../../middleware/authorization.js";
 
@@ -143,4 +143,22 @@ userRouter.get("/" , validation(getAllSchema) , authentication, authorization(['
  * @apiError {String} message Error message if user not found
  */
 userRouter.get("/profile" ,validation(getAllSchema) ,authentication, asyncHandler(us.profile))
+
+/**
+ * @api {post} /user/create Create new user (Admin)
+ * @apiName CreateUser
+ * @apiGroup Users
+ * @apiDescription Create a new user account (Admin only)
+ * @apiHeader {String} Authorization Bearer token for authentication
+ * @apiBody {String} name User's full name
+ * @apiBody {String} email User's email address
+ * @apiBody {String} password User's password (min 8 chars, uppercase, lowercase, number)
+ * @apiBody {Array} [phoneNumbers] Array of phone numbers (Egyptian format)
+ * @apiBody {Array} [address] Array of addresses
+ * @apiBody {String} [role] User role (user, admin, dataEntry) - defaults to 'user'
+ * @apiSuccess {String} message Success message
+ * @apiSuccess {Object} user Created user object (without password)
+ * @apiError {String} message Error message if email/phone already exists or validation fails
+ */
+userRouter.post("/create", validation(createUserSchema), authentication, authorization(['admin']), asyncHandler(us.createUser))
 

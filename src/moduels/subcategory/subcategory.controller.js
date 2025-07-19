@@ -58,7 +58,7 @@ subcategoryRouter.get("/:id", validation(ssSchema.getSubcategory), asyncHandler(
  * @api {post} /subcategory Create new subcategory (Admin)
  * @apiName CreateSubcategory
  * @apiGroup Subcategories
- * @apiDescription Create a new product subcategory (Admin only)
+ * @apiDescription Create a new product subcategory (Admin and Data Entry only)
  * @apiHeader {String} Authorization Bearer token for authentication
  * @apiBody {String} title Subcategory title
  * @apiBody {String} categoryId Parent category ID
@@ -66,13 +66,13 @@ subcategoryRouter.get("/:id", validation(ssSchema.getSubcategory), asyncHandler(
  * @apiSuccess {Object} subcategory Created subcategory object
  * @apiError {String} message Error message if validation fails or duplicate data
  */
-subcategoryRouter.post("/", authentication, authorization(["admin"]), multerHost("image").single("image"), validation(ssSchema.createSubcategory), asyncHandler(ss.createSubcategory));
+subcategoryRouter.post("/", authentication, authorization(["admin", "dataEntry"]), multerHost("image").single("image"), validation(ssSchema.createSubcategory), asyncHandler(ss.createSubcategory));
 
 /**
  * @api {put} /subcategory/:id Update subcategory (Admin)
  * @apiName UpdateSubcategory
  * @apiGroup Subcategories
- * @apiDescription Update subcategory information (Admin only)
+ * @apiDescription Update subcategory information (Admin and Data Entry only)
  * @apiHeader {String} Authorization Bearer token for authentication
  * @apiParam {String} id Subcategory unique identifier
  * @apiBody {String} [title] New subcategory title
@@ -82,7 +82,7 @@ subcategoryRouter.post("/", authentication, authorization(["admin"]), multerHost
  * @apiSuccess {Object} subcategory Updated subcategory object
  * @apiError {String} message Error message if subcategory not found
  */
-subcategoryRouter.put("/:id", authentication, authorization(["admin"]), multerHost("image").single("image"), validation(ssSchema.updateSubcategory), asyncHandler(ss.updateSubcategory));
+subcategoryRouter.put("/:id", authentication, authorization(["admin", "dataEntry"]), multerHost("image").single("image"), validation(ssSchema.updateSubcategory), asyncHandler(ss.updateSubcategory));
 
 /**
  * @api {delete} /subcategory/:id Delete subcategory (Admin)

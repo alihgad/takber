@@ -41,7 +41,7 @@ categoryRouter.get("/:id",validation(csSchema.getCategory),asyncHandler(cs.getCa
  * @api {post} /category Create new category (Admin)
  * @apiName CreateCategory
  * @apiGroup Categories
- * @apiDescription Create a new product category (Admin only)
+ * @apiDescription Create a new product category (Admin and Data Entry only)
  * @apiHeader {String} Authorization Bearer token for authentication
  * @apiBody {String} name Category name
  * @apiBody {String} customId Category custom ID (unique)
@@ -50,13 +50,13 @@ categoryRouter.get("/:id",validation(csSchema.getCategory),asyncHandler(cs.getCa
  * @apiSuccess {Object} category Created category object
  * @apiError {String} message Error message if validation fails or duplicate data
  */
-categoryRouter.post("/", authentication,authorization(["admin"]), multerHost("image").single("image") ,validation(csSchema.createCategory),asyncHandler(cs.createCategory))
+categoryRouter.post("/", authentication,authorization(["admin", "dataEntry"]), multerHost("image").single("image") ,validation(csSchema.createCategory),asyncHandler(cs.createCategory))
 
 /**
  * @api {put} /category/:id Update category (Admin)
  * @apiName UpdateCategory
  * @apiGroup Categories
- * @apiDescription Update category information (Admin only)
+ * @apiDescription Update category information (Admin and Data Entry only)
  * @apiHeader {String} Authorization Bearer token for authentication
  * @apiParam {String} id Category unique identifier
  * @apiBody {String} [name] New category name
@@ -67,7 +67,7 @@ categoryRouter.post("/", authentication,authorization(["admin"]), multerHost("im
  * @apiSuccess {Object} category Updated category object
  * @apiError {String} message Error message if category not found
  */
-categoryRouter.put("/:id" ,authentication,authorization(["admin"]), multerHost("image").single("image") ,validation(csSchema.updateCategory),asyncHandler(cs.updateCategory))
+categoryRouter.put("/:id" ,authentication,authorization(["admin", "dataEntry"]), multerHost("image").single("image") ,validation(csSchema.updateCategory),asyncHandler(cs.updateCategory))
 
 /**
  * @api {delete} /category/:id Delete category (Admin)

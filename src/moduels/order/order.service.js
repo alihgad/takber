@@ -3,12 +3,13 @@ import cartModel from "../../db/models/cart.model.js"
 import couponModel from "../../db/models/coupon.model.js"
 import stockModel from "../../db/models/stock.model.js"
 import productModel from "../../db/models/product.model.js"
+import shippingAmountModel from "../../db/models/shippingAmount.js"
 // import mongoose from "mongoose"
 import categoryModel from "../../db/models/category.model.js"
 
 // Create new order from cart
 export let createOrder = async (req, res) => {
-    const { address, phoneNumbers, couponId } = req.body
+    const { address, phoneNumbers, city, couponId } = req.body
     const userId = req.user._id
 
     // Get user's cart
@@ -29,6 +30,21 @@ export let createOrder = async (req, res) => {
         totalAmount += item.productId.price * item.quantity
     })
 
+    // Get shipping amount for the city
+    let shippingAmount = 0
+    const shippingInfo = await shippingAmountModel.findOne({ 
+        city: city, 
+        active: true 
+    })
+    
+    if (shippingInfo) {
+        shippingAmount = shippingInfo.amount
+    } else {
+        return res.status(400).json({ 
+            message: `Shipping not available for city: ${city}. Please contact support.` 
+        })
+    }
+
     // Apply coupon discount if provided
     if (couponId) {
         const coupon = await couponModel.findById(couponId)
@@ -37,6 +53,9 @@ export let createOrder = async (req, res) => {
             totalAmount -= discount
         }
     }
+
+    // Add shipping amount to total
+    totalAmount += shippingAmount
 
     // Check stock availability and update stock
     for (let item of cart.products) {
@@ -64,8 +83,10 @@ export let createOrder = async (req, res) => {
         amount: totalAmount,
         address,
         phoneNumbers,
+        city,
         couponId,
-        discount
+        discount,
+        shippingAmount
     })
 
     // Clear the cart
@@ -82,7 +103,11 @@ export let createOrder = async (req, res) => {
 
     return res.status(201).json({ 
         message: "Order created successfully", 
-        order 
+        order: {
+            ...order.toObject(),
+            shippingAmount,
+            subtotal: totalAmount - shippingAmount
+        }
     })
 }
 
@@ -417,6 +442,4 @@ export let getCategorySales = async (req, res) => {
         overallStats,
         categories: result 
     })
-} 
-
-
+}

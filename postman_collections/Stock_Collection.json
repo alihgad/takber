@@ -1,0 +1,143 @@
+{
+	"info": {
+		"_postman_id": "stock-collection",
+		"name": "Stock",
+		"description": "Stock APIs for Takbeer e-commerce platform",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get All Stock",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/stock",
+					"host": ["{{base_url}}"],
+					"path": ["stock"]
+				}
+			}
+		},
+		{
+			"name": "Get Stock by Product",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/stock/product/{{product_id}}",
+					"host": ["{{base_url}}"],
+					"path": ["stock", "product", "{{product_id}}"]
+				}
+			}
+		},
+		{
+			"name": "Create Stock (Admin/Data Entry)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"productId\": \"{{product_id}}\",\n  \"color\": \"أزرق\",\n  \"size\": \"128GB\",\n  \"quantity\": 50,\n  \"price\": 45000\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/stock",
+					"host": ["{{base_url}}"],
+					"path": ["stock"]
+				}
+			}
+		},
+		{
+			"name": "Update Stock (Admin/Data Entry)",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"quantity\": 30,\n  \"price\": 44000\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/stock/{{stock_id}}",
+					"host": ["{{base_url}}"],
+					"path": ["stock", "{{stock_id}}"]
+				}
+			}
+		},
+		{
+			"name": "Delete Stock (Admin Only)",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/stock/{{stock_id}}",
+					"host": ["{{base_url}}"],
+					"path": ["stock", "{{stock_id}}"]
+				}
+			}
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "admin_token",
+			"value": "your_admin_jwt_token_here",
+			"type": "string"
+		},
+		{
+			"key": "product_id",
+			"value": "product_id_from_response",
+			"type": "string"
+		},
+		{
+			"key": "stock_id",
+			"value": "stock_id_from_response",
+			"type": "string"
+		}
+	]
+} 

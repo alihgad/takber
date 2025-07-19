@@ -73,9 +73,14 @@ let productSchema = new mongoose.Schema({
         unique: true
     },
     description: {
-        type: String,
-        required: true,
-        trim: true
+        arabic: {
+            type: String,
+            required: true
+        },
+        english: {
+            type: String,
+            required: true
+        }
     },
     price: {
         type: Number,
@@ -118,6 +123,7 @@ let productSchema = new mongoose.Schema({
         ref: "User",
         required: true
     }
+
 },
     {
         timestamps: true,

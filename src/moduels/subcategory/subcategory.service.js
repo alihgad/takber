@@ -30,8 +30,14 @@ export const createSubcategory = async (req, res, next) => {
 
     // Create subcategory
     const subcategory = await subcategoryModel.create({
-        title,
-        slug: slugify(title),
+        title: {
+            arabic: title.arabic.toLowerCase(),
+            english: title.english.toLowerCase()
+        },
+        slug: {
+            arabic: slugify(title.arabic, { replacement: '-', lower: true }),
+            english: slugify(title.english, { replacement: '-', lower: true })
+        },
         image: {
             secure_url,
             public_id
@@ -77,12 +83,24 @@ export const updateSubcategory = async (req, res, next) => {
 
     // Update title if provided
     if (title) {
-        const exist = await subcategoryModel.findOne({ title });
-        if (exist && exist._id.toString() !== subcategory._id.toString()) {
+        const exist = await subcategoryModel.findOne({ 
+            $or: [
+                { 'title.arabic': title.arabic.toLowerCase() },
+                { 'title.english': title.english.toLowerCase() }
+            ],
+            _id: { $ne: subcategory._id }
+        });
+        if (exist) {
             return next(new Error('Subcategory title already exists', { cause: 400 }));
         }
-        subcategory.title = title;
-        subcategory.slug = slugify(title);
+        subcategory.title = {
+            arabic: title.arabic.toLowerCase(),
+            english: title.english.toLowerCase()
+        };
+        subcategory.slug = {
+            arabic: slugify(title.arabic, { replacement: '-', lower: true }),
+            english: slugify(title.english, { replacement: '-', lower: true })
+        };
     }
     
     await subcategory.save();

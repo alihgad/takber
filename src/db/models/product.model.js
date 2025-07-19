@@ -7,19 +7,41 @@ import categoryModel from "./category.model.js";
 
 let productSchema = new mongoose.Schema({
     title: {
-        type: String,
-        required: true,
-        trim: true,
-        lowercase: true,
-        unique: true,
-        min: 3,
-        max: 10
+        arabic: {
+            type: String,
+            required: true,
+            trim: true,
+            lowercase: true,
+            unique: true,
+            min: 3,
+            max: 10
+        },
+        english: {
+            type: String,
+            required: true,
+            trim: true,
+            lowercase: true,
+            unique: true,
+            min: 3,
+            max: 10
+        }
     },
     slug: {
-        type: String,
-        required: true,
-        lowercase: true,
-        unique: true
+        arabic: {
+            type: String,
+            required: true,
+            lowercase: true,
+            unique: true,
+            
+        },
+        english: {
+            type: String,
+            required: true,
+            trim: true,
+            lowercase: true,
+            unique: true
+           
+        }
     },
     image: {
         secure_url: {
@@ -106,7 +128,7 @@ const deleting = async (doc) => {
 
             await cloudinary.api.delete_folder(path);
             console.log("Deleted folder:", path);
-        }else{
+        } else {
             console.log("No customId found for category or product, skipping Cloudinary deletion.");
         }
 

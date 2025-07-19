@@ -23,13 +23,13 @@ export const createProduct = asyncHandler(async (req, res, next) => {
     if (!cat) {
         next(new Error('Category not found', { cause: 404 }))
     }
-    
+
     if (subcategory) {
         let subcat = await subcategoryModel.findById(subcategory)
         if (!subcat) {
             return next(new Error('Subcategory not found', { cause: 404 }))
         }
-        
+
         if (subcat.category.toString() !== category) {
             return next(new Error('Subcategory does not belong to the specified category', { cause: 400 }))
         }
@@ -130,7 +130,7 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
         product.price = price
         product.subPrice = discount ? price - (discount / 100 * price) : price
     }
-    
+
     // Update category if provided
     if (category) {
         let cat = await categoryModel.findById(category)
@@ -138,26 +138,26 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
             return next(new Error('Category not found', { cause: 404 }))
         }
         product.category = category
-        
+
         // If category changes, remove subcategory unless a new one is provided
         if (product.category.toString() !== category && !subcategory) {
             product.subcategory = null
         }
     }
-    
+
     // Update subcategory if provided
     if (subcategory) {
         let subcat = await subcategoryModel.findById(subcategory)
         if (!subcat) {
             return next(new Error('Subcategory not found', { cause: 404 }))
         }
-        
+
         // Check if subcategory belongs to the product's category
         const categoryToCheck = category || product.category.toString()
         if (subcat.category.toString() !== categoryToCheck) {
             return next(new Error('Subcategory does not belong to the specified category', { cause: 400 }))
         }
-        
+
         product.subcategory = subcategory
     } else if (subcategory === null) {
         // Allow explicitly setting subcategory to null
@@ -254,27 +254,27 @@ export const changePhoto = asyncHandler(async (req, res, next) => {
 
 
 export const getfullProudcts = asyncHandler(async (req, res, next) => {
-    let { brand , category } = req.query
+    let { brand, category } = req.query
 
     let query = {}
 
-    if(brand){
+    if (brand) {
         query.brand = brand
     }
 
-    if(category){
+    if (category) {
         query.category = category
     }
 
-    
+
     let products = await productModel.find(query).lean()
-    
+
 
     if (!products || products.length === 0) {
         return res.status(404).json({ msg: 'No products found' })
     }
 
-    let result = await getProductStocks(products , req.query)
+    let result = await getProductStocks(products, req.query)
 
     return res.json({ msg: 'Products fetched', result })
 })
@@ -282,32 +282,33 @@ export const getfullProudcts = asyncHandler(async (req, res, next) => {
 export const getProudcts = asyncHandler(async (req, res, next) => {
     let filter = {}
 
-    if(req.quey.category){
+    if (req.quey.category) {
         filter.categoryId = req.quey.category
-    if(req.query.category){
-        filter.category = req.query.category
+        if (req.query.category) {
+            filter.category = req.query.category
+        }
+
+
+
+
+        let products = await productModel.find(filter).populate('category', 'title slug').lean().select("title image _id price subPrice isDiscounted discount  ")
+
+        if (req.query.subcategory) {
+            filter.subcategory = req.query.subcategory
+        }
+
+
+
+        if (!products || products.length === 0) {
+            return res.status(404).json({ msg: 'No products found' })
+        }
+
+
+        return res.json({ msg: 'Products fetched', products })
     }
-
-   
-
- 
-    let products = await productModel.find(filter).lean().select("title image _id price subPrice isDiscounted discount  ")
-    
-    if(req.query.subcategory){
-        filter.subcategory = req.query.subcategory
-    }
-   
-    
-    let products = await productModel.find(filter).populate(['category', 'subcategory']).lean().select("title image _id price subPrice isDiscounted discount subcategory category")
-    
-
-    if (!products || products.length === 0) {
-        return res.status(404).json({ msg: 'No products found' })
-    }
-
-
-    return res.json({ msg: 'Products fetched', products })
 })
+
+
 
 export const getOneProudct = asyncHandler(async (req, res, next) => {
     let { ProductID } = req.params
@@ -332,7 +333,7 @@ export const deleteProudct = asyncHandler(async (req, res, next) => {
 
 
     let Product = await productModel.findOneAndDelete({ _id: ProductID }).populate('category')
-    
+
 
     if (!Product) {
         return res.status(404).json({

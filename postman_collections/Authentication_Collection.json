@@ -18,12 +18,12 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"userName\": \"testuser\",\n  \"email\": \"test@example.com\",\n  \"password\": \"12345678\",\n  \"phoneNumbers\": [\"01012345678\"],\n  \"address\": [\"Cairo, Egypt\"]\n}"
+					"raw": "{\n  \"name\": \"testuser\",\n  \"email\": \"test@example.com\",\n  \"password\": \"Test123456\",\n  \"phoneNumbers\": [\"01012345678\"],\n  \"address\": [\"Cairo, Egypt\"]\n}"
 				},
 				"url": {
-					"raw": "{{base_url}}/user/signup",
+					"raw": "{{base_url}}/user",
 					"host": ["{{base_url}}"],
-					"path": ["user", "signup"]
+					"path": ["user"]
 				}
 			}
 		},
@@ -39,17 +39,17 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"12345678\"\n}"
+					"raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"Test123456\"\n}"
 				},
 				"url": {
-					"raw": "{{base_url}}/user/signin",
+					"raw": "{{base_url}}/user/login",
 					"host": ["{{base_url}}"],
-					"path": ["user", "signin"]
+					"path": ["user", "login"]
 				}
 			}
 		},
 		{
-			"name": "Admin Login",
+			"name": "Google OAuth Login",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -60,17 +60,96 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"email\": \"admin@takbeer.com\",\n  \"password\": \"admin123\"\n}"
+					"raw": "{\n  \"idToken\": \"your_google_id_token_here\"\n}"
 				},
 				"url": {
-					"raw": "{{base_url}}/user/signin",
+					"raw": "{{base_url}}/user/googleLogin",
 					"host": ["{{base_url}}"],
-					"path": ["user", "signin"]
+					"path": ["user", "googleLogin"]
 				}
 			}
 		},
 		{
-			"name": "Data Entry Login",
+			"name": "Verify Email",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/user/verify/{{verification_token}}",
+					"host": ["{{base_url}}"],
+					"path": ["user", "verify", "{{verification_token}}"]
+				}
+			}
+		},
+		{
+			"name": "Update User Profile",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{user_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Updated Name\",\n  \"email\": \"updated@example.com\",\n  \"phoneNumbers\": [\"01098765432\"],\n  \"address\": [\"Alexandria, Egypt\"]\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/user/userUpdate",
+					"host": ["{{base_url}}"],
+					"path": ["user", "userUpdate"]
+				}
+			}
+		},
+		{
+			"name": "Update User Password",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer {{user_token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"oldPassword\": \"Test123456\",\n  \"newPassword\": \"NewTest123456\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/user/userUpdatePassword",
+					"host": ["{{base_url}}"],
+					"path": ["user", "userUpdatePassword"]
+				}
+			}
+		},
+		{
+			"name": "Delete User Account",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{user_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/user/userDelete",
+					"host": ["{{base_url}}"],
+					"path": ["user", "userDelete"]
+				}
+			}
+		},
+		{
+			"name": "Forgot Password",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -81,12 +160,67 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"email\": \"dataentry@takbeer.com\",\n  \"password\": \"data123\"\n}"
+					"raw": "{\n  \"email\": \"test@example.com\"\n}"
 				},
 				"url": {
-					"raw": "{{base_url}}/user/signin",
+					"raw": "{{base_url}}/user/forgetPassword",
 					"host": ["{{base_url}}"],
-					"path": ["user", "signin"]
+					"path": ["user", "forgetPassword"]
+				}
+			}
+		},
+		{
+			"name": "Reset Password",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"newPassword\": \"NewTest123456\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/user/reset-password/{{reset_token}}",
+					"host": ["{{base_url}}"],
+					"path": ["user", "reset-password", "{{reset_token}}"]
+				}
+			}
+		},
+		{
+			"name": "Get User Profile",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{user_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/user/profile",
+					"host": ["{{base_url}}"],
+					"path": ["user", "profile"]
+				}
+			}
+		},
+		{
+			"name": "Get All Users (Admin)",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/user",
+					"host": ["{{base_url}}"],
+					"path": ["user"]
 				}
 			}
 		},
@@ -106,12 +240,54 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"userName\": \"newuser\",\n  \"email\": \"newuser@example.com\",\n  \"password\": \"12345678\",\n  \"phoneNumbers\": [\"01098765432\"],\n  \"address\": [\"Alexandria, Egypt\"],\n  \"role\": \"dataEntry\"\n}"
+					"raw": "{\n  \"name\": \"newuser\",\n  \"email\": \"newuser@example.com\",\n  \"password\": \"Test123456\",\n  \"phoneNumbers\": [\"01098765432\"],\n  \"address\": [\"Alexandria, Egypt\"],\n  \"role\": \"dataEntry\"\n}"
 				},
 				"url": {
 					"raw": "{{base_url}}/user/create",
 					"host": ["{{base_url}}"],
 					"path": ["user", "create"]
+				}
+			}
+		},
+		{
+			"name": "Admin Login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"admin@takbeer.com\",\n  \"password\": \"admin123\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/user/login",
+					"host": ["{{base_url}}"],
+					"path": ["user", "login"]
+				}
+			}
+		},
+		{
+			"name": "Data Entry Login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"dataentry@takbeer.com\",\n  \"password\": \"data123\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/user/login",
+					"host": ["{{base_url}}"],
+					"path": ["user", "login"]
 				}
 			}
 		}
@@ -145,6 +321,21 @@
 		{
 			"key": "admin_token",
 			"value": "your_admin_jwt_token_here",
+			"type": "string"
+		},
+		{
+			"key": "user_token",
+			"value": "your_user_jwt_token_here",
+			"type": "string"
+		},
+		{
+			"key": "verification_token",
+			"value": "your_verification_token_here",
+			"type": "string"
+		},
+		{
+			"key": "reset_token",
+			"value": "your_reset_token_here",
 			"type": "string"
 		}
 	]

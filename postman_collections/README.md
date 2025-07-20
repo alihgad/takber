@@ -1,149 +1,213 @@
-# 📁 Postman Collections - Takbeer API
+# Takbeer Authentication APIs Documentation
 
-تم تقسيم Postman Collection إلى ملفات منفصلة لكل module لتسهيل التنظيم والاستخدام.
+This collection contains all authentication-related APIs for the Takbeer e-commerce platform.
 
-## 📋 الملفات المتاحة:
+## Setup Instructions
 
-### 🔐 **Authentication_Collection.json**
-- تسجيل دخول المستخدمين (Admin, Data Entry, User)
-- إنشاء مستخدم جديد (للمدير فقط)
-- **عدد الـ APIs**: 5
+1. Import the `Authentication_Collection.json` file into Postman
+2. Set up the environment variables in your Postman environment:
+   - `base_url`: Your API base URL (e.g., `http://localhost:3000`)
+   - `admin_token`: JWT token for admin user (obtained after admin login)
+   - `user_token`: JWT token for regular user (obtained after user login)
+   - `verification_token`: Email verification token (received via email)
+   - `reset_token`: Password reset token (received via email)
 
-### 📂 **Categories_Collection.json**
-- إدارة التصنيفات (عرض، إنشاء، تحديث، حذف)
-- للمدير ومدخل البيانات (الحذف للمدير فقط)
-- **عدد الـ APIs**: 5
+## API Endpoints
 
-### 📁 **Subcategories_Collection.json**
-- إدارة التصنيفات الفرعية (عرض، إنشاء، تحديث، حذف)
-- للمدير ومدخل البيانات (الحذف للمدير فقط)
-- **عدد الـ APIs**: 6
+### 1. User Registration
+- **Method**: POST
+- **URL**: `{{base_url}}/user`
+- **Description**: Register a new user account
+- **Body**:
+  ```json
+  {
+    "name": "testuser",
+    "email": "test@example.com",
+    "password": "Test123456",
+    "phoneNumbers": ["01012345678"],
+    "address": ["Cairo, Egypt"]
+  }
+  ```
+- **Response**: User object with verification email sent
 
-### 🛍️ **Products_Collection.json**
-- إدارة المنتجات (عرض، إنشاء، تحديث، حذف)
-- للمدير ومدخل البيانات (الحذف للمدير فقط)
-- **عدد الـ APIs**: 8
+### 2. User Login
+- **Method**: POST
+- **URL**: `{{base_url}}/user/login`
+- **Description**: Authenticate user and return access token
+- **Body**:
+  ```json
+  {
+    "email": "test@example.com",
+    "password": "Test123456"
+  }
+  ```
+- **Response**: JWT token for authentication
 
-### 📦 **Stock_Collection.json**
-- إدارة المخزون (عرض، إنشاء، تحديث، حذف)
-- للمدير ومدخل البيانات (الحذف للمدير فقط)
-- **عدد الـ APIs**: 5
+### 3. Google OAuth Login
+- **Method**: POST
+- **URL**: `{{base_url}}/user/googleLogin`
+- **Description**: Authenticate user using Google OAuth
+- **Body**:
+  ```json
+  {
+    "idToken": "your_google_id_token_here"
+  }
+  ```
+- **Response**: JWT token for authentication
 
-### 🛒 **Cart_Collection.json**
-- إدارة الكارت للمستخدمين
-- **عدد الـ APIs**: 5
+### 4. Email Verification
+- **Method**: GET
+- **URL**: `{{base_url}}/user/verify/{{verification_token}}`
+- **Description**: Verify user's email address using token from email
+- **Response**: Success message
 
-### ❤️ **Wishlist_Collection.json**
-- إدارة المفضلة للمستخدمين
-- **عدد الـ APIs**: 3
+### 5. Update User Profile
+- **Method**: PUT
+- **URL**: `{{base_url}}/user/userUpdate`
+- **Description**: Update authenticated user's profile information
+- **Headers**: `Authorization: Bearer {{user_token}}`
+- **Body**:
+  ```json
+  {
+    "name": "Updated Name",
+    "email": "updated@example.com",
+    "phoneNumbers": ["01098765432"],
+    "address": ["Alexandria, Egypt"]
+  }
+  ```
 
-### 📋 **Orders_Collection.json**
-- إدارة الطلبات (عرض للمدير، إنشاء للمستخدمين)
-- حساب مصاريف الشحن تلقائياً حسب المدينة
-- **عدد الـ APIs**: 6
+### 6. Update User Password
+- **Method**: PUT
+- **URL**: `{{base_url}}/user/userUpdatePassword`
+- **Description**: Change authenticated user's password
+- **Headers**: `Authorization: Bearer {{user_token}}`
+- **Body**:
+  ```json
+  {
+    "oldPassword": "Test123456",
+    "newPassword": "NewTest123456"
+  }
+  ```
 
-### 🎫 **Coupons_Collection.json**
-- إدارة الكوبونات (للمدير فقط)
-- **عدد الـ APIs**: 4
+### 7. Delete User Account
+- **Method**: DELETE
+- **URL**: `{{base_url}}/user/userDelete`
+- **Description**: Delete authenticated user's account
+- **Headers**: `Authorization: Bearer {{user_token}}`
 
-### 🚚 **ShippingAmount_Collection.json**
-- إدارة تكاليف الشحن (للمدير فقط)
-- **عدد الـ APIs**: 6
+### 8. Forgot Password
+- **Method**: POST
+- **URL**: `{{base_url}}/user/forgetPassword`
+- **Description**: Send password reset email to user
+- **Body**:
+  ```json
+  {
+    "email": "test@example.com"
+  }
+  ```
 
-## 🚀 كيفية الاستخدام:
+### 9. Reset Password
+- **Method**: PUT
+- **URL**: `{{base_url}}/user/reset-password/{{reset_token}}`
+- **Description**: Reset user password using token from email
+- **Body**:
+  ```json
+  {
+    "newPassword": "NewTest123456"
+  }
+  ```
 
-### 1. استيراد Collections:
-```
-Postman → Import → اختر الملفات المطلوبة
-```
+### 10. Get User Profile
+- **Method**: GET
+- **URL**: `{{base_url}}/user/profile`
+- **Description**: Get authenticated user's profile information
+- **Headers**: `Authorization: Bearer {{user_token}}`
 
-### 2. إنشاء Environment:
-```
-Import → Takbeer_Environment.json
-```
+### 11. Get All Users (Admin Only)
+- **Method**: GET
+- **URL**: `{{base_url}}/user`
+- **Description**: Retrieve all users (Admin only)
+- **Headers**: `Authorization: Bearer {{admin_token}}`
 
-### 3. اختيار Environment:
-```
-Environment dropdown → "Takbeer Local"
-```
+### 12. Create User (Admin Only)
+- **Method**: POST
+- **URL**: `{{base_url}}/user/create`
+- **Description**: Create a new user account (Admin only)
+- **Headers**: `Authorization: Bearer {{admin_token}}`
+- **Body**:
+  ```json
+  {
+    "name": "newuser",
+    "email": "newuser@example.com",
+    "password": "Test123456",
+    "phoneNumbers": ["01098765432"],
+    "address": ["Alexandria, Egypt"],
+    "role": "dataEntry"
+  }
+  ```
 
-## 📊 ترتيب الاستخدام المقترح:
+### 13. Admin Login
+- **Method**: POST
+- **URL**: `{{base_url}}/user/login`
+- **Description**: Login for admin user
+- **Body**:
+  ```json
+  {
+    "email": "admin@takbeer.com",
+    "password": "admin123"
+  }
+  ```
 
-### **للمدير (Admin)**:
-1. **Authentication** → تسجيل دخول المدير
-2. **Categories** → إنشاء التصنيفات
-3. **Subcategories** → إنشاء التصنيفات الفرعية
-4. **Products** → إنشاء المنتجات
-5. **Stock** → إدارة المخزون
-6. **Coupons** → إدارة الكوبونات
-7. **ShippingAmount** → إدارة تكاليف الشحن
-8. **Orders** → إدارة الطلبات
+### 14. Data Entry Login
+- **Method**: POST
+- **URL**: `{{base_url}}/user/login`
+- **Description**: Login for data entry user
+- **Body**:
+  ```json
+  {
+    "email": "dataentry@takbeer.com",
+    "password": "data123"
+  }
+  ```
 
-### **لمدخل البيانات (Data Entry)**:
-1. **Authentication** → تسجيل دخول مدخل البيانات
-2. **Categories** → إنشاء وتحديث التصنيفات
-3. **Subcategories** → إنشاء وتحديث التصنيفات الفرعية
-4. **Products** → إنشاء وتحديث المنتجات
-5. **Stock** → إدارة المخزون
+## Password Requirements
 
-### **للمستخدم العادي (User)**:
-1. **Authentication** → تسجيل دخول المستخدم
-2. **Cart** → إدارة الكارت
-3. **Wishlist** → إدارة المفضلة
-4. **Orders** → إنشاء ومتابعة الطلبات
+Passwords must meet the following criteria:
+- Minimum 8 characters
+- At least one uppercase letter
+- At least one lowercase letter
+- At least one number
 
-## 🔑 المتغيرات المطلوبة:
+## Phone Number Format
 
-### **متغيرات الـ Tokens**:
-- `admin_token` - للمدير
-- `user_token` - للمستخدم العادي
-- `data_entry_token` - لمدخل البيانات
+Phone numbers must be in Egyptian format:
+- Starts with 01
+- Followed by 0, 1, 2, or 5
+- Total 11 digits
+- Example: `01012345678`
 
-### **متغيرات الـ IDs**:
-- `category_id` - معرف التصنيف
-- `subcategory_id` - معرف التصنيف الفرعي
-- `product_id` - معرف المنتج
-- `stock_id` - معرف المخزون
-- `cart_item_id` - معرف عنصر الكارت
-- `wishlist_item_id` - معرف عنصر المفضلة
-- `order_id` - معرف الطلب
-- `coupon_id` - معرف الكوبون
-- `shipping_amount_id` - معرف تكلفة الشحن
+## Authentication Flow
 
-## ⚡ نصائح سريعة:
+1. **Registration**: User signs up → receives verification email
+2. **Verification**: User clicks email link → account verified
+3. **Login**: User logs in → receives JWT token
+4. **Protected Routes**: Use JWT token in Authorization header
 
-### **تحديث الـ Tokens تلقائياً**:
-أضف هذا الكود في `Tests` tab لكل request تسجيل دخول:
+## Error Handling
 
-```javascript
-if (pm.response.code === 200) {
-    const response = pm.response.json();
-    pm.environment.set("admin_token", response.token);
-}
-```
+All APIs return appropriate HTTP status codes:
+- `200`: Success
+- `201`: Created
+- `400`: Bad Request
+- `401`: Unauthorized
+- `404`: Not Found
+- `500`: Internal Server Error
 
-### **تحديث الـ IDs تلقائياً**:
-أضف هذا الكود في `Tests` tab لكل request إنشاء:
+## Testing Workflow
 
-```javascript
-if (pm.response.code === 201) {
-    const response = pm.response.json();
-    pm.environment.set("category_id", response.category._id);
-}
-```
-
-## 📞 الدعم:
-
-إذا واجهت أي مشاكل:
-1. تأكد من تشغيل الخادم على `localhost:3000`
-2. تحقق من صحة الـ Environment variables
-3. تأكد من صحة الـ Authorization tokens
-4. راجع الـ logs في console
-
-## 🎯 المميزات:
-
-- ✅ **تنظيم أفضل**: كل module في ملف منفصل
-- ✅ **سهولة الاستخدام**: يمكن استيراد module واحد فقط
-- ✅ **مرونة**: يمكن تعديل كل collection بشكل مستقل
-- ✅ **توثيق كامل**: كل API موثقة بالتفصيل
-- ✅ **بيانات تجريبية**: جاهزة للاستخدام الفوري 
+1. Start with "User Registration" to create a new account
+2. Check email for verification link or use "Verify Email" with token
+3. Use "User Login" to get authentication token
+4. Update the `user_token` variable in your environment
+5. Test protected endpoints using the token
+6. For admin features, use "Admin Login" and update `admin_token` 

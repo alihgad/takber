@@ -1,10 +1,14 @@
 import userModel from "../../db/models/user.model.js"
+import { OAuth2Client } from "google-auth-library"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import { sendEmail } from "../../services/sendEmail.js"
 import { emailTemplate } from "../../services/content.js"
 import dotenv from "dotenv"
 dotenv.config()
+
+const client = new OAuth2Client(process.env.client_id)
+
 export let signUp = async (req, res) => {
     let { phoneNumbers, email, name } = req.body
 
@@ -86,29 +90,6 @@ export let googleLogin = async (req, res, next) => {
     return res.status(200).json({ msg: "Logged in successfully", token });
 }
 
-export let verify = async (req, res, next) => {
-    let token = req.params.token
-    let user = await userModel.findOneAndUpdate({ _id: jwt.verify(token, process.env.SECRET_KEY).id  , Verfied: false} , { Verfied: true })
-    if (!user) {
-        return res.status(401).json({ message: "Unauthorized" })
-    }
-    
-
-    let x = await sendEmail(
-        user.email,
-        "Takbeer Email Verification",
-        emailTemplate("Takbeer Email Verification", user.name, `
-          <p>Welcome to <b>Takbeer</b></p>
-          <p>Your email has been verified , you can login now </p>
-        `)
-    );
-
-    if (!x) {
-        return res.status(400).json({ message: "Email Not Sent" })
-    }
-
-    return res.status(201).json({ message: "done" })
-}
 
 export let update = async (req, res, next) => {
     let { name, phoneNumbers, address } = req.body
@@ -128,7 +109,7 @@ export let updatePassword = async (req, res, next) => {
     }
 
     let user = await userModel.findOne({ _id: req.user._id })
-    let isCorrect = await bcrypt.compare(oldPassword, user.password)
+    let isCorrect =  bcrypt.compare(oldPassword, user.password)
     if (!isCorrect) {
         return res.status(401).json({ message: "Incorrect Password" })
     }

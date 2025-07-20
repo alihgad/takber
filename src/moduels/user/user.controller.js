@@ -48,16 +48,7 @@ userRouter.post("/login" , validation(loginSchema), asyncHandler(us.login))
  */
 userRouter.post("/googleLogin" , asyncHandler(us.googleLogin))
 
-/**
- * @api {get} /user/verify/:token Verify email
- * @apiName VerifyEmail
- * @apiGroup Users
- * @apiDescription Verify user's email address using token
- * @apiParam {String} token Email verification token
- * @apiSuccess {String} message Success message
- * @apiError {String} message Error message if token invalid or already verified
- */
-userRouter.get("/verify/:token" , validation(verfiySchema) , asyncHandler(us.verify))   
+
 
 /**
  * @api {put} /user/userUpdate Update user profile

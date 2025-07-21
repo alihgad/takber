@@ -13,7 +13,7 @@ export const createProduct = asyncHandler(async (req, res, next) => {
     const { title, description, price, discount, category, subcategory, brand } = req.body
 
     // Check if title exists (check both arabic and english)
-    let titleExist = await productModel.findOne({ 
+    let titleExist = await productModel.findOne({
         $or: [
             { 'title.arabic': title.arabic.toLowerCase() },
             { 'title.english': title.english.toLowerCase() }
@@ -111,7 +111,7 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
 
     if (title) {
         // Check if title exists (check both arabic and english)
-        let titleExist = await productModel.findOne({ 
+        let titleExist = await productModel.findOne({
             $or: [
                 { 'title.arabic': title.arabic.toLowerCase() },
                 { 'title.english': title.english.toLowerCase() }
@@ -308,24 +308,34 @@ export const getProudcts = asyncHandler(async (req, res, next) => {
     if (req.query.category) {
         filter.category = req.query.category
 
-
-
-
-        let products = await productModel.find(filter).populate('category', 'title.arabic title.english slug.arabic slug.english').lean().select("title image _id price finalPrice isDiscounted discount  ")
-
-        if (req.query.subcategory) {
-            filter.subcategory = req.query.subcategory
-        }
-
-
-
-        if (!products || products.length === 0) {
-            return res.status(404).json({ msg: 'No products found' })
-        }
-
-
-        return res.json({ msg: 'Products fetched', products })
     }
+
+    if (req.query.search) {
+        let search = req.query.search
+        filter.$or = [
+            { "title.arabic": { $regex: search, $options: 'i' } },
+            { "title.english": { $regex: search, $options: 'i' } }
+        ];
+
+    }
+
+
+
+    let products = await productModel.find(filter).populate('category', 'title.arabic title.english slug.arabic slug.english').lean().select("title image _id price finalPrice isDiscounted discount  ")
+
+    if (req.query.subcategory) {
+        filter.subcategory = req.query.subcategory
+    }
+
+
+
+    if (!products || products.length === 0) {
+        return res.status(404).json({ msg: 'No products found' })
+    }
+
+
+    return res.json({ msg: 'Products fetched', products })
+
 })
 
 

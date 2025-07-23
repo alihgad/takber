@@ -39,10 +39,7 @@ export let login = async (req, res, next) => {
     if (!user) {
         return res.status(404).json({ message: "User Not Found" })
     }
-
-    if (!user.Verfied) {
-        return res.status(401).json({ message: "Email Not Verified" })
-    }
+    
     if (user.provider !== "local") {
         return res.status(401).json({ message: "Please login with google" })
     }

@@ -35,8 +35,8 @@ let userSchema = new mongoose.Schema({
         }
     ],
     address: {
-        type: String,
-        default: ""
+        type: Array,
+        default: []
     },
     usedCoupons: [
         {

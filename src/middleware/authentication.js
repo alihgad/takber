@@ -9,13 +9,13 @@ const authentication= asyncHandler(
     
     async(req,res,next)=>{
             
-        const {token}=req.headers
+        const {authorization}=req.headers
         
-        if(!token){
+        if(!authorization){
             return next(new Error('Token not found',{cause:401}))
         }
 
-     let x = jwt.verify(token,process.env.SECRET_KEY )
+     let x = jwt.verify(authorization,process.env.SECRET_KEY )
 
     
         const user= await userModel.findById({_id:x.id})

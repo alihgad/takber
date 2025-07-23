@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { glopalSchema } from "../../services/glopalSchema.js";
+import glopalSchema from "../../services/glopalSchema.js";
 
 // Get shipping amount by ID
 export const getShippingAmount = Joi.object({

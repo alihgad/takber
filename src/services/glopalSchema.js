@@ -14,7 +14,6 @@ export default {
     connection: joi.string(),
     "cache-control": joi.string(),
     "x-vercel-internal-ingress-bucket": joi.string(),
-    "token": joi.string().required().min(20),
     'x-vercel-proxied-for': joi.string(),
     'x-vercel-ip-timezone': joi.string(),
     'x-forwarded-for': joi.string(),
@@ -44,7 +43,7 @@ export default {
     'content-length': joi.string(),
     referer: joi.string(),
     connection: joi.string(),
-    token : joi.string().required()
+    authorization : joi.string().required()
 
   }).required(),
   file: joi.object({

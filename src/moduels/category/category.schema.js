@@ -7,6 +7,10 @@ export let createCategory = {
             arabic: Joi.string().required().min(3).max(10),
             english: Joi.string().required().min(3).max(10)
         }).required(),
+        description: Joi.object({
+            arabic: Joi.string().required(),
+            english: Joi.string().required()
+        }).required(),
         image: glopalSchema.file,
 
     }),

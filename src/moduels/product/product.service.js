@@ -277,7 +277,7 @@ export const changePhoto = asyncHandler(async (req, res, next) => {
 
 
 export const getfullProudcts = asyncHandler(async (req, res, next) => {
-    let { brand, category } = req.query
+    let { brand, category , subcategory } = req.query
 
     let query = {}
 
@@ -287,6 +287,10 @@ export const getfullProudcts = asyncHandler(async (req, res, next) => {
 
     if (category) {
         query.category = category
+    }
+
+    if(subcategory){
+        query.subcategory = subcategory
     }
 
 

@@ -4,8 +4,8 @@ import glopalSchema from "../../services/glopalSchema.js";
 export let createSubcategory = {
     body: Joi.object({
         title: Joi.object({
-            arabic: Joi.string().required().min(3).max(30),
-            english: Joi.string().required().min(3).max(30)
+            arabic: Joi.string().required().min(3).max(20),
+            english: Joi.string().required().min(3).max(20)
         }).required(),
         categoryId: Joi.string().required()
     }),

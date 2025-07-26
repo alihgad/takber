@@ -44,8 +44,8 @@ export const changePhotoSchema = {
 export const updateProudctSchema = {
     body: joi.object({
         title: joi.object({
-            arabic: joi.string().min(3).max(10),
-            english: joi.string().min(3).max(10)
+            arabic: joi.string().min(3).max(30),
+            english: joi.string().min(3).max(30)
         }),
         description: joi.object({
             arabic: joi.string(),
@@ -54,10 +54,8 @@ export const updateProudctSchema = {
         price: joi.number(),
         discount: joi.number().max(100),
         category: glopalSchema.id,
-        subcategory: joi.alternatives().try(
-            glopalSchema.id,
-            joi.valid(null)
-        )
+        brand: joi.string(),
+        subcategory: glopalSchema.id
     }),
 
 

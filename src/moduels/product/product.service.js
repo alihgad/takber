@@ -98,11 +98,13 @@ export const createProduct = asyncHandler(async (req, res, next) => {
 
 
 export const updateProduct = asyncHandler(async (req, res, next) => {
-    const { title, stock, description, price, discount, category, subcategory } = req.body
-    const { ProductID } = req.params
+    const { title, description, price, discount, category, brand, subcategory  } = req.body
+    const { productID } = req.params
 
 
-    let product = await productModel.findOne({ _id: ProductID })
+
+
+    let product = await productModel.findOne({ _id: productID })
 
     if (!product) {
         return next(new Error('Product not found', { cause: 404 }))
@@ -116,7 +118,7 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
                 { 'title.arabic': title.arabic.toLowerCase() },
                 { 'title.english': title.english.toLowerCase() }
             ],
-            _id: { $ne: ProductID } // Exclude current product
+            _id: { $ne: productID } // Exclude current product
         })
 
         if (titleExist) {
@@ -135,9 +137,7 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
 
 
 
-    if (stock) {
-        product.stock = stock
-    }
+    
 
     if (description) {
         product.description = {
@@ -147,6 +147,7 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
     }
 
     if (discount !== undefined) {
+        product.isDiscounted = true
         product.discount = discount
     }
 

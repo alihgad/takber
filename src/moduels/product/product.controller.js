@@ -54,7 +54,7 @@ productRouter.delete('/:ProductID', validation(productSchema.deleteProudctSchema
  * @apiSuccess {Object} product Updated product object
  * @apiError {String} message Error message if product not found or image upload fails
  */
-productRouter.put('/changePhoto/:ProductID', authentication, authorization([roleOptions.admin , roleOptions.dataEntry]), multerHost("image").single("image"), validation(productSchema.changePhotoSchema), ps.changePhoto)
+productRouter.put('/changePhoto/:productID', authentication, authorization([roleOptions.admin , roleOptions.dataEntry]), multerHost("image").single("image"), validation(productSchema.changePhotoSchema), ps.changePhoto)
 
 /**
  * @api {put} /product/:ProductID Update product (Admin)
@@ -75,7 +75,7 @@ productRouter.put('/changePhoto/:ProductID', authentication, authorization([role
  * @apiSuccess {Object} product Updated product object
  * @apiError {String} message Error message if product not found
  */
-productRouter.put('/:ProductID', authentication, authorization([roleOptions.admin, roleOptions.dataEntry]), validation(productSchema.updateProudctSchema), ps.updateProduct)
+productRouter.put('/:productID', authentication, authorization([roleOptions.admin, roleOptions.dataEntry]), validation(productSchema.updateProudctSchema), ps.updateProduct)
 
 /**
  * @api {get} /product Get all products

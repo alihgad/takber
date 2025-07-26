@@ -47,6 +47,11 @@ export const createSubcategory = async (req, res, next) => {
         createdBy: req.user._id,
     });
 
+    // Add subcategory to parent category's subCategories array
+    await categoryModel.findByIdAndUpdate(categoryId, {
+        $push: { subCategories: subcategory._id }
+    });
+
     return res.status(201).json({ message: "done", subcategory });
 };
 
@@ -78,6 +83,20 @@ export const updateSubcategory = async (req, res, next) => {
         if (!category) {
             return next(new Error('Category not found', { cause: 404 }));
         }
+        
+        // If category is changing, update both old and new parent categories
+        if (subcategory.category.toString() !== categoryId) {
+            // Remove from old category
+            await categoryModel.findByIdAndUpdate(subcategory.category, {
+                $pull: { subCategories: subcategory._id }
+            });
+            
+            // Add to new category
+            await categoryModel.findByIdAndUpdate(categoryId, {
+                $push: { subCategories: subcategory._id }
+            });
+        }
+        
         subcategory.category = categoryId;
     }
 

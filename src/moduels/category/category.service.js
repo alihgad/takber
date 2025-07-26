@@ -87,11 +87,18 @@ export const updateCategory = async (req, res, next) => {
 
 
 export const getCategories = async (req, res, next) => {
-    let categories = await categoryModel.find()
-    if (!categories) {
-        return next(new Error('Categories not found', { cause: 404 }))
+    try {
+        // Fetch categories with populated subcategories
+        let categories = await categoryModel.find().populate('subcategories');
+        
+        if (!categories.length) {
+            return next(new Error('Categories not found', { cause: 404 }));
+        }
+        
+        return res.status(200).json({ message: "done", categories });
+    } catch (error) {
+        return next(new Error(`Error fetching categories: ${error.message}`, { cause: 500 }));
     }
-    return res.status(201).json({ message: "done", categories })
 }
 
 export const getCategory = async (req, res, next) => {
@@ -109,3 +116,4 @@ export const deleteCategory = async (req, res, next) => {
     }
     return res.status(200).json({ message: "done", category })
 }
+

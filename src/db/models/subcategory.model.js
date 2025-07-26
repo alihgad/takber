@@ -2,6 +2,8 @@ import mongoose from "mongoose";
 import productModel from "./product.model.js";
 import { v2 as cloudinary } from "cloudinary";
 
+// Import categoryModel to update parent category when subcategory is deleted
+
 let subcategorySchema = new mongoose.Schema({
     title: {
         arabic: {
@@ -62,10 +64,12 @@ let subcategorySchema = new mongoose.Schema({
         ref: "User",
         required: true
     }
-},{timestamps: true})
+},{timestamps: true , toJSON: { virtuals: true }, toObject: { virtuals: true }});
 
 const deleting = async (doc) => {
     if (doc) {
+        // Initialize categoryModel if not already done (to avoid circular dependency)
+       
         // Delete image from cloudinary
         if (doc.image && doc.image.public_id) {
             try {

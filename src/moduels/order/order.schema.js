@@ -8,42 +8,40 @@ export const createOrderSchema = {
         city: Joi.string().required(),
         couponId: glopalSchema.id.optional()
     }),
-    headers: glopalSchema.headers.required()
 }
 
 export const updateOrderStatusSchema = {
     body: Joi.object({
         status: Joi.string().valid("pending", "shipped", "delivered").required()
     }),
-    headers: glopalSchema.headers.required()
+
 }
 
 export const getOrderSchema = {
     params: Joi.object({
         orderId: glopalSchema.id.required()
     }),
-    headers: glopalSchema.headers.required()
+
 }
 
 export const getUserOrdersSchema = {
-    headers: glopalSchema.headers.required()
+
 }
 
 export const getAllOrdersSchema = {
-    headers: glopalSchema.headers.required()
 }
 
 export const cancelOrderSchema = {
     params: Joi.object({
         orderId: glopalSchema.id.required()
     }),
-    headers: glopalSchema.headers.required()
+  
 }
 
 export const getTotalRevenueSchema = {
-    headers: glopalSchema.headers.required()
+   
 }
 
 export const getCategorySalesSchema = {
-    headers: glopalSchema.headers.required()
+   
 } 

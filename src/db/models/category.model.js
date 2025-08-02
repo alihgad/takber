@@ -36,17 +36,6 @@ let categorySchema = new mongoose.Schema(
         max: 10,
       },
     },
-    image: {
-      secure_url: {
-        type: String,
-        required: true,
-      },
-      public_id: {
-        type: String,
-        required: true,
-      },
-    },
-
     customId: {
       type: String,
       required: true,

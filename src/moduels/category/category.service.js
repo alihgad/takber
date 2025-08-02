@@ -5,14 +5,9 @@ import categoryModel from "../../db/models/category.model.js"
 
 export const createCategory = async (req, res, next) => {
     let customId = nanoid(5)
-    if (!req.file) {
-        return next(new Error('Image is required', { cause: 400 }))
-    }
-    let { secure_url, public_id } = await cloudinary.uploader.upload(req.file.path, {
-        folder: `Takbeer/category/${customId}`
-    })
+  
 
-    req.folder = `Takbeer/category/${customId}`
+    
 
     let category = await categoryModel.create({
         title: {
@@ -23,10 +18,7 @@ export const createCategory = async (req, res, next) => {
             arabic: slugify(req.body.title.arabic, { replacement: '-', lower: true }),
             english: slugify(req.body.title.english, { replacement: '-', lower: true })
         },
-        image: {
-            secure_url,
-            public_id
-        },
+       
         customId,
         createdBy: req.user._id,
 

@@ -17,16 +17,7 @@ export const createSubcategory = async (req, res, next) => {
     const customId = nanoid(5);
     
     // Check if image is provided
-    if (!req.file) {
-        return next(new Error('Image is required', { cause: 400 }));
-    }
-    
-    // Upload image to cloudinary
-    const { secure_url, public_id } = await cloudinary.uploader.upload(req.file.path, {
-        folder: `Takbeer/subcategory/${customId}`
-    });
-
-    req.folder = `Takbeer/subcategory/${customId}`;
+   
 
     // Create subcategory
     const subcategory = await subcategoryModel.create({
@@ -38,10 +29,7 @@ export const createSubcategory = async (req, res, next) => {
             arabic: slugify(title.arabic, { replacement: '-', lower: true }),
             english: slugify(title.english, { replacement: '-', lower: true })
         },
-        image: {
-            secure_url,
-            public_id
-        },
+       
         customId,
         category: categoryId,
         createdBy: req.user._id,

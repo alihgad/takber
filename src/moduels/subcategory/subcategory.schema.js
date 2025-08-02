@@ -9,21 +9,21 @@ export let createSubcategory = {
         }).required(),
         categoryId: Joi.string().required()
     }),
-    file: glopalSchema.file.required(),
+
 }
 
 export let updateSubcategory = {
     body: Joi.object({
         title: Joi.object({
-            arabic: Joi.string().min(3).max(10),
-            english: Joi.string().min(3).max(10)
+            arabic: Joi.string().min(3).max(20),
+            english: Joi.string().min(3).max(20)
         }),
         categoryId: Joi.string(),
     }),
     params: Joi.object({
         id: glopalSchema.id.required(),
     }),
-    file: glopalSchema.file,
+
 }
 
 export let getSubcategory = {

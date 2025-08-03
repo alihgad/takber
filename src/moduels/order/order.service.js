@@ -9,22 +9,27 @@ import categoryModel from "../../db/models/category.model.js"
 
 // Create new order from cart
 export let createOrder = async (req, res) => {
-    const { address, phoneNumbers, city, couponId } = req.body
+    const { address, phoneNumbers, city, couponId, products } = req.body
     const userId = req.user._id
+    let cart = null
 
-    // Get user's cart
-    const cart = await cartModel.findOne({ userId }).populate([
-        { path: 'products.productId', select: 'name price images' },
-        { path: 'products.stockId', select: 'color size quantity' }
-    ])
+    if (userId) {
+        // Get user's cart
+        cart = await cartModel.findOne({ userId }).populate([
+            { path: 'products.productId', select: 'name price images' },
+            { path: 'products.stockId', select: 'color size quantity' }
+        ])
+    }
 
-    if (!cart || cart.products.length === 0) {
-        return res.status(400).json({ message: "Cart is empty" })
+    if ((!cart || cart.products.length === 0) && (!products || products.length === 0)) {
+        return res.status(400).json({ message: "Cart and products is empty" })
     }
 
     // Calculate total amount
     let totalAmount = 0
     let discount = 0
+
+    cart = cart || { products }
 
     cart.products.forEach(item => {
         totalAmount += item.productId.price * item.quantity
@@ -32,16 +37,16 @@ export let createOrder = async (req, res) => {
 
     // Get shipping amount for the city
     let shippingAmount = 0
-    const shippingInfo = await shippingAmountModel.findOne({ 
-        city: city, 
-        active: true 
+    const shippingInfo = await shippingAmountModel.findOne({
+        city: city,
+        active: true
     })
-    
+
     if (shippingInfo) {
         shippingAmount = shippingInfo.amount
     } else {
-        return res.status(400).json({ 
-            message: `Shipping not available for city: ${city}. Please contact support.` 
+        return res.status(400).json({
+            message: `Shipping not available for city: ${city}. Please contact support.`
         })
     }
 
@@ -61,11 +66,11 @@ export let createOrder = async (req, res) => {
     for (let item of cart.products) {
         const stock = await stockModel.findById(item.stockId)
         if (!stock || stock.quantity < item.quantity) {
-            return res.status(400).json({ 
-                message: `Insufficient stock for product: ${item.productId.name}` 
+            return res.status(400).json({
+                message: `Insufficient stock for product: ${item.productId.name}`
             })
         }
-        
+
         // Update stock quantity
         stock.quantity -= item.quantity
         await stock.save()
@@ -74,12 +79,11 @@ export let createOrder = async (req, res) => {
     // Create order
     const order = await orderModel.create({
         userId,
-        products: cart.products.map(item => ({
+        cart: cart.products.map(item => ({
             productId: item.productId._id,
             quantity: item.quantity
         })),
-        cart: cart.products,
-        cartId: cart._id,
+        cartId: cart?._id || null,
         amount: totalAmount,
         address,
         phoneNumbers,
@@ -101,8 +105,8 @@ export let createOrder = async (req, res) => {
         { path: 'couponId', select: 'code discount' }
     ])
 
-    return res.status(201).json({ 
-        message: "Order created successfully", 
+    return res.status(201).json({
+        message: "Order created successfully",
         order: {
             ...order.toObject(),
             shippingAmount,
@@ -168,29 +172,29 @@ export let updateOrderStatus = async (req, res) => {
         { path: 'processed_by', select: 'name email' }
     ])
 
-    return res.status(200).json({ 
-        message: "Order status updated successfully", 
-        order 
+    return res.status(200).json({
+        message: "Order status updated successfully",
+        order
     })
 }
 
 // Get all orders (Admin only)
 export let getAllOrders = async (req, res) => {
 
-    const {page,limit,filter,from,to}=req.query
-    if(!limit){
+    const { page, limit, filter, from, to } = req.query
+    if (!limit) {
         limit = 10
     }
-    if(!page){
+    if (!page) {
         page = 1
     }
     let skip = (page - 1) * limit
     const query = {}
 
-    if(filter){
+    if (filter) {
         query.status = filter
     }
-    if(from && to){
+    if (from && to) {
         query.createdAt = { $gte: new Date(from), $lte: new Date(to) }
     }
 
@@ -225,8 +229,8 @@ export let cancelOrder = async (req, res) => {
 
     // Only allow cancellation of pending orders
     if (order.status !== "pending") {
-        return res.status(400).json({ 
-            message: "Cannot cancel order that is already shipped or delivered" 
+        return res.status(400).json({
+            message: "Cannot cancel order that is already shipped or delivered"
         })
     }
 
@@ -250,9 +254,9 @@ export let cancelOrder = async (req, res) => {
         { path: 'couponId', select: 'code discount' }
     ])
 
-    return res.status(200).json({ 
-        message: "Order cancelled successfully", 
-        order 
+    return res.status(200).json({
+        message: "Order cancelled successfully",
+        order
     })
 }
 
@@ -284,17 +288,17 @@ export let getOrderStats = async (req, res) => {
 // Get total revenue from all sold orders (Admin only)
 export let getTotalRevenue = async (req, res) => {
     const { from, to, status } = req.query
-    
+
     // Build query filter
     const query = {}
-    
+
     // Filter by status (default to delivered orders)
     if (status) {
         query.status = status
     } else {
         query.status = { $in: ["delivered", "shipped"] } // Only count completed orders
     }
-    
+
     // Filter by date range
     if (from && to) {
         query.createdAt = { $gte: new Date(from), $lte: new Date(to) }
@@ -321,8 +325,8 @@ export let getTotalRevenue = async (req, res) => {
         totalRevenue: revenueResult[0]?.totalRevenue || 0,
         totalOrders: revenueResult[0]?.orderCount || 0,
         totalDiscount: totalDiscount[0]?.totalDiscount || 0,
-        averageOrderValue: revenueResult[0]?.totalRevenue && revenueResult[0]?.orderCount 
-            ? (revenueResult[0].totalRevenue / revenueResult[0].orderCount).toFixed(2) 
+        averageOrderValue: revenueResult[0]?.totalRevenue && revenueResult[0]?.orderCount
+            ? (revenueResult[0].totalRevenue / revenueResult[0].orderCount).toFixed(2)
             : 0,
         filters: {
             status: status || "delivered,shipped",
@@ -331,26 +335,26 @@ export let getTotalRevenue = async (req, res) => {
         }
     }
 
-    return res.status(200).json({ 
+    return res.status(200).json({
         message: "Total revenue calculated successfully",
-        revenue: result 
+        revenue: result
     })
 }
 
 // Get category sales statistics (Admin only)
 export let getCategorySales = async (req, res) => {
     const { from, to, status } = req.query
-    
+
     // Build query filter
     const query = {}
-    
+
     // Filter by status (default to delivered orders)
     if (status) {
         query.status = status
     } else {
         query.status = { $in: ["delivered", "shipped"] } // Only count completed orders
     }
-    
+
     // Filter by date range
     if (from && to) {
         query.createdAt = { $gte: new Date(from), $lte: new Date(to) }
@@ -368,7 +372,7 @@ export let getCategorySales = async (req, res) => {
 
     // Group by category
     const categoryStats = {}
-    
+
     orders.forEach(order => {
         order.products.forEach(product => {
             const categoryId = product.productId?.category?.toString()
@@ -382,12 +386,12 @@ export let getCategorySales = async (req, res) => {
                         products: {}
                     }
                 }
-                
+
                 const revenue = product.productId.price * product.quantity
                 categoryStats[categoryId].totalRevenue += revenue
                 categoryStats[categoryId].totalItems += product.quantity
                 categoryStats[categoryId].orderCount += 1
-                
+
                 // Track individual products
                 const productId = product.productId._id.toString()
                 if (!categoryStats[categoryId].products[productId]) {
@@ -407,10 +411,10 @@ export let getCategorySales = async (req, res) => {
     // Convert to array and populate category names
     const categoryIds = Object.keys(categoryStats)
     const categories = await productModel.distinct('category', { category: { $in: categoryIds } })
-    
+
     // Get category details
     const categoryDetails = await categoryModel.find({ _id: { $in: categoryIds } }).select('name')
-    
+
     const result = Object.values(categoryStats).map(stat => {
         const categoryDetail = categoryDetails.find(cat => cat._id.toString() === stat.categoryId)
         return {
@@ -432,7 +436,7 @@ export let getCategorySales = async (req, res) => {
         averageRevenuePerCategory: result.length > 0 ? (result.reduce((sum, cat) => sum + cat.totalRevenue, 0) / result.length).toFixed(2) : 0
     }
 
-    return res.status(200).json({ 
+    return res.status(200).json({
         message: "Category sales statistics calculated successfully",
         filters: {
             status: status || "delivered,shipped",
@@ -440,6 +444,6 @@ export let getCategorySales = async (req, res) => {
             to: to || null
         },
         overallStats,
-        categories: result 
+        categories: result
     })
 }

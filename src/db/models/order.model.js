@@ -8,17 +8,6 @@ let orderSchema = new mongoose.Schema({
         ref: "User",
         default: null
     },
-    products: [{
-        productId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Product",
-            required: true
-        },
-        quantity: {
-            type: Number,
-            required: true
-        }
-    }],
     amount: {
         type: Number,
         required: true

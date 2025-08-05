@@ -3,6 +3,21 @@ import ShippingAmount from "../../db/models/shippingAmount.js";
 // Get all shipping amounts
 export const getShippingAmounts = async (req, res) => {
     try {
+        const shippingAmounts = await ShippingAmount.find().sort({ createdAt: -1 });
+        
+        res.status(200).json({
+            message: "Shipping amounts retrieved successfully",
+            shippingAmounts
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Error retrieving shipping amounts",
+            error: error.message
+        });
+    }
+};
+export const getShippingAmountsUser = async (req, res) => {
+    try {
         const shippingAmounts = await ShippingAmount.find({ active: true }).sort({ createdAt: -1 });
         
         res.status(200).json({

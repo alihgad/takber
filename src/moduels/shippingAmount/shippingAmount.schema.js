@@ -2,12 +2,14 @@ import Joi from "joi";
 import glopalSchema from "../../services/glopalSchema.js";
 
 // Get shipping amount by ID
-export const getShippingAmount = Joi.object({
-    id: glopalSchema.id
-});
+export const getShippingAmount = {
+    params: Joi.object({
+        id: glopalSchema.id
+    })
+};
 
 // Create shipping amount
-export const createShippingAmount = Joi.object({
+export const createShippingAmount = {
     body: Joi.object({
         amount: Joi.number().min(0).required().messages({
             "number.base": "Amount must be a number",
@@ -25,10 +27,10 @@ export const createShippingAmount = Joi.object({
         })
     }),
     headers: glopalSchema.headers.required()
-});
+};
 
 // Update shipping amount
-export const updateShippingAmount = Joi.object({
+export const updateShippingAmount = {
     params: Joi.object({
         id: glopalSchema.id
     }),
@@ -47,18 +49,18 @@ export const updateShippingAmount = Joi.object({
         })
     }),
     headers: glopalSchema.headers.required()
-});
+};
 
 // Delete shipping amount
-export const deleteShippingAmount = Joi.object({
+export const deleteShippingAmount = {
     params: Joi.object({
         id: glopalSchema.id
     }),
     headers: glopalSchema.headers.required()
-});
+};
 
 // Get shipping amount by city
-export const getShippingAmountByCity = Joi.object({
+export const getShippingAmountByCity = {
     params: Joi.object({
         city: Joi.string().min(2).max(50).required().messages({
             "string.base": "City must be a string",
@@ -67,4 +69,4 @@ export const getShippingAmountByCity = Joi.object({
             "any.required": "City is required"
         })
     })
-}); 
+}; 

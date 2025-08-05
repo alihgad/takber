@@ -312,7 +312,6 @@ export const getProudcts = asyncHandler(async (req, res, next) => {
 
     if (req.query.category) {
         filter.category = req.query.category
-
     }
 
     if (req.query.search) {

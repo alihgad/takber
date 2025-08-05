@@ -36,9 +36,9 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{base_url}}/shippingAmount/city/القاهرة",
+					"raw": "{{base_url}}/shippingAmount/city/{{city_name}}",
 					"host": ["{{base_url}}"],
-					"path": ["shippingAmount", "city", "القاهرة"]
+					"path": ["shippingAmount", "city", "{{city_name}}"]
 				}
 			}
 		},
@@ -48,17 +48,17 @@
 				"method": "POST",
 				"header": [
 					{
-						"key": "Content-Type",
-						"value": "application/json"
-					},
-					{
 						"key": "Authorization",
 						"value": "Bearer {{admin_token}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"amount\": 50,\n  \"city\": \"القاهرة\",\n  \"active\": true\n}"
+					"raw": "{\n    \"amount\": 25.50,\n    \"city\": \"الرياض\",\n    \"active\": true\n}"
 				},
 				"url": {
 					"raw": "{{base_url}}/shippingAmount",
@@ -73,17 +73,17 @@
 				"method": "PUT",
 				"header": [
 					{
-						"key": "Content-Type",
-						"value": "application/json"
-					},
-					{
 						"key": "Authorization",
 						"value": "Bearer {{admin_token}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
 					}
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"amount\": 75,\n  \"active\": true\n}"
+					"raw": "{\n    \"amount\": 30.00,\n    \"city\": \"جدة\",\n    \"active\": true\n}"
 				},
 				"url": {
 					"raw": "{{base_url}}/shippingAmount/{{shipping_amount_id}}",
@@ -138,12 +138,17 @@
 		},
 		{
 			"key": "admin_token",
-			"value": "your_admin_jwt_token_here",
+			"value": "your_admin_token_here",
 			"type": "string"
 		},
 		{
 			"key": "shipping_amount_id",
-			"value": "shipping_amount_id_from_response",
+			"value": "your_shipping_amount_id_here",
+			"type": "string"
+		},
+		{
+			"key": "city_name",
+			"value": "الرياض",
 			"type": "string"
 		}
 	]

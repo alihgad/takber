@@ -16,7 +16,7 @@ export let createOrder = async (req, res) => {
     if (userId) {
         // Get user's cart
         cart = await cartModel.findOne({ userId }).populate([
-            { path: 'products.productId', select: 'name price images' },
+            
             { path: 'products.stockId', select: 'color size quantity' }
         ])
     }
@@ -161,7 +161,7 @@ export let getUserOrders = async (req, res) => {
     const userId = req.user._id
 
     const orders = await orderModel.find({ userId }).populate([
-        { path: 'products.productId', select: 'name price images' },
+        
         { path: 'cart.productId', select: 'name price images' },
         { path: 'cart.stockId', select: 'color size' },
         { path: 'couponId', select: 'code discount' }
@@ -176,7 +176,7 @@ export let getOrder = async (req, res) => {
     const userId = req.user._id
 
     const order = await orderModel.findOne({ _id: orderId, userId }).populate([
-        { path: 'products.productId', select: 'name price images' },
+        
         { path: 'cart.productId', select: 'name price images' },
         { path: 'cart.stockId', select: 'color size' },
         { path: 'couponId', select: 'code discount' },
@@ -206,7 +206,7 @@ export let updateOrderStatus = async (req, res) => {
     await order.save()
 
     await order.populate([
-        { path: 'products.productId', select: 'name price images' },
+        
         { path: 'cart.productId', select: 'name price images' },
         { path: 'cart.stockId', select: 'color size' },
         { path: 'couponId', select: 'code discount' },
@@ -241,7 +241,7 @@ export let getAllOrders = async (req, res) => {
 
     const orders = await orderModel.find(query).skip(skip).limit(limit).populate([
         { path: 'userId', select: 'name email' },
-        { path: 'products.productId', select: 'name price images' },
+        
         { path: 'cart.productId', select: 'name price images' },
         { path: 'cart.stockId', select: 'color size' },
         { path: 'couponId', select: 'code discount' },
@@ -252,7 +252,7 @@ export let getAllOrders = async (req, res) => {
     let itemCount = 0
     orders.forEach(order => {
         total += order.amount
-        itemCount += order.products.length
+        itemCount += order.cart.length
     })
 
     return res.status(200).json({ orders, total, itemCount })
@@ -289,7 +289,7 @@ export let cancelOrder = async (req, res) => {
     await order.save()
 
     await order.populate([
-        { path: 'products.productId', select: 'name price images' },
+        
         { path: 'cart.productId', select: 'name price images' },
         { path: 'cart.stockId', select: 'color size' },
         { path: 'couponId', select: 'code discount' }

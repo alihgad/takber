@@ -181,7 +181,7 @@ export let updateOrderStatus = async (req, res) => {
 // Get all orders (Admin only)
 export let getAllOrders = async (req, res) => {
 
-    const { page, limit, filter, from, to } = req.query
+    let { page, limit, filter, from, to } = req.query
     if (!limit) {
         limit = 10
     }

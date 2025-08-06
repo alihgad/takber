@@ -21,19 +21,52 @@ export let createOrder = async (req, res) => {
         ])
     }
 
-    if ((!cart || cart.products.length === 0) && (!products || products.length === 0)) {
+    // Handle fallback to products from request body
+    if ((!cart || cart.products.length === 0) && products && products.length > 0) {
+        // Create a temporary cart structure from products
+        const populatedProducts = await Promise.all(
+            products.map(async (item) => {
+                const product = await productModel.findById(item.productId).select('name price images');
+                const stock = await stockModel.findById(item.stockId).select('color size quantity');
+                
+                return {
+                    productId: product,
+                    stockId: stock,
+                    quantity: item.quantity
+                };
+            })
+        );
+        
+        cart = { products: populatedProducts };
+    }
+
+    if (!cart || cart.products.length === 0) {
         return res.status(400).json({ message: "Cart and products is empty" })
     }
 
-    // Calculate total amount
+    // Calculate total amount with validation
     let totalAmount = 0
     let discount = 0
 
-    cart = cart || { products }
+    for (let item of cart.products) {
+        // Validate product and price
+        if (!item.productId || !item.productId.price) {
+            return res.status(400).json({
+                message: `Invalid product data for item: ${item.productId?.name || 'Unknown'}`
+            });
+        }
 
-    cart.products.forEach(item => {
-        totalAmount += item.productId.price * item.quantity
-    })
+        const price = parseFloat(item.productId.price);
+        const quantity = parseInt(item.quantity);
+
+        if (isNaN(price) || isNaN(quantity)) {
+            return res.status(400).json({
+                message: `Invalid price or quantity for product: ${item.productId.name}`
+            });
+        }
+
+        totalAmount += price * quantity;
+    }
 
     // Get shipping amount for the city
     let shippingAmount = 0
@@ -43,7 +76,7 @@ export let createOrder = async (req, res) => {
     })
 
     if (shippingInfo) {
-        shippingAmount = shippingInfo.amount
+        shippingAmount = parseFloat(shippingInfo.amount) || 0;
     } else {
         return res.status(400).json({
             message: `Shipping not available for city: ${city}. Please contact support.`
@@ -54,7 +87,7 @@ export let createOrder = async (req, res) => {
     if (couponId) {
         const coupon = await couponModel.findById(couponId)
         if (coupon && coupon.active && new Date() < coupon.expireDate) {
-            discount = (totalAmount * coupon.discount) / 100
+            discount = (totalAmount * parseFloat(coupon.discount)) / 100
             totalAmount -= discount
         }
     }
@@ -62,9 +95,16 @@ export let createOrder = async (req, res) => {
     // Add shipping amount to total
     totalAmount += shippingAmount
 
+    // Validate final amount
+    if (isNaN(totalAmount) || totalAmount < 0) {
+        return res.status(400).json({
+            message: "Invalid total amount calculated"
+        });
+    }
+
     // Check stock availability and update stock
     for (let item of cart.products) {
-        const stock = await stockModel.findById(item.stockId)
+        const stock = await stockModel.findById(item.stockId._id || item.stockId)
         if (!stock || stock.quantity < item.quantity) {
             return res.status(400).json({
                 message: `Insufficient stock for product: ${item.productId.name}`
@@ -76,30 +116,32 @@ export let createOrder = async (req, res) => {
         await stock.save()
     }
 
-    // Create order
+    // Create order with proper structure
     const order = await orderModel.create({
         userId,
         cart: cart.products.map(item => ({
             productId: item.productId._id,
+            stockId: item.stockId._id || item.stockId, // Ensure stockId is included
             quantity: item.quantity
         })),
-        cartId: cart?._id || null,
-        amount: totalAmount,
+        cartId: cart._id || null,
+        amount: Math.round(totalAmount * 100) / 100, // Round to 2 decimal places
         address,
         phoneNumbers,
         city,
         couponId,
-        discount,
-        shippingAmount
+        discount: Math.round(discount * 100) / 100,
+        shippingAmount: Math.round(shippingAmount * 100) / 100
     })
 
-    // Clear the cart
-    cart.products = []
-    await cart.save()
+    // Clear the cart only if it's a real cart (not from products array)
+    if (cart._id) {
+        cart.products = []
+        await cart.save()
+    }
 
     // Populate order details
     await order.populate([
-        { path: 'products.productId', select: 'name price images' },
         { path: 'cart.productId', select: 'name price images' },
         { path: 'cart.stockId', select: 'color size' },
         { path: 'couponId', select: 'code discount' }
@@ -109,7 +151,6 @@ export let createOrder = async (req, res) => {
         message: "Order created successfully",
         order: {
             ...order.toObject(),
-            shippingAmount,
             subtotal: totalAmount - shippingAmount
         }
     })

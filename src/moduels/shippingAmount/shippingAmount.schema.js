@@ -26,7 +26,6 @@ export const createShippingAmount = {
             "boolean.base": "Active must be a boolean"
         })
     }),
-    headers: glopalSchema.headers.required()
 };
 
 // Update shipping amount
@@ -48,7 +47,7 @@ export const updateShippingAmount = {
             "boolean.base": "Active must be a boolean"
         })
     }),
-    headers: glopalSchema.headers.required()
+    
 };
 
 // Delete shipping amount
@@ -56,7 +55,7 @@ export const deleteShippingAmount = {
     params: Joi.object({
         id: glopalSchema.id
     }),
-    headers: glopalSchema.headers.required()
+    
 };
 
 // Get shipping amount by city

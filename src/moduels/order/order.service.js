@@ -185,7 +185,8 @@ export let getOrder = async (req, res) => {
         { path: 'cart.productId' },
         { path: 'cart.stockId' },
         { path: 'couponId' },
-        { path: 'processed_by' }
+        { path: 'processed_by' },
+        { path: 'userId' }
     ])
 
     if (!order) {

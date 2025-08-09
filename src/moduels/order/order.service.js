@@ -226,7 +226,7 @@ export let updateOrderStatus = async (req, res) => {
 
 // Get all orders (Admin only)
 export let getAllOrders = async (req, res) => {
-
+    
     let { page, limit, filter, from, to } = req.query
     if (!limit) {
         limit = 10
@@ -244,9 +244,10 @@ export let getAllOrders = async (req, res) => {
         query.createdAt = { $gte: new Date(from), $lte: new Date(to) }
     }
 
+
+
     const orders = await orderModel.find(query).skip(skip).limit(limit).populate([
         { path: 'userId' },
-        
         { path: 'cart.productId' },
         { path: 'cart.stockId' },
         { path: 'couponId' },
@@ -255,9 +256,10 @@ export let getAllOrders = async (req, res) => {
 
     let total = 0
     let itemCount = 0
+    
     orders.forEach(order => {
         total += order.amount
-        itemCount += order.products.length
+        itemCount += order.cart.length
     })
 
     return res.status(200).json({ orders, total, itemCount })

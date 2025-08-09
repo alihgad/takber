@@ -124,11 +124,6 @@ export let createOrder = async (req, res) => {
             stockId: item.stockId._id || item.stockId,
             quantity: item.quantity
         })),
-        products: cart.products.map(item => ({
-            productId: item.productId._id,
-            stockId: item.stockId._id || item.stockId, // Ensure stockId is included
-            quantity: item.quantity
-        })),
         cartId: cart._id || null,
         amount: Math.round(totalAmount * 100) / 100, // Round to 2 decimal places
         address,
@@ -147,7 +142,6 @@ export let createOrder = async (req, res) => {
 
     // Populate order details
     await order.populate([
-        { path: 'products.productId' },
         { path: 'cart.productId'},
         { path: 'cart.stockId'},
         { path: 'couponId' }
@@ -423,7 +417,7 @@ export let getCategorySales = async (req, res) => {
     const categoryStats = {}
 
     orders.forEach(order => {
-        order.products.forEach(product => {
+        order.cart.products.forEach(product => {
             const categoryId = product.productId?.category?.toString()
             if (categoryId) {
                 if (!categoryStats[categoryId]) {
@@ -473,7 +467,7 @@ export let getCategorySales = async (req, res) => {
             totalItems: stat.totalItems,
             orderCount: stat.orderCount,
             averageOrderValue: stat.orderCount > 0 ? (stat.totalRevenue / stat.orderCount).toFixed(2) : 0,
-            products: Object.values(stat.products)
+            cart: Object.values(stat.cart)
         }
     }).sort((a, b) => b.totalRevenue - a.totalRevenue) // Sort by revenue descending
 

@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import bcrypt from "bcrypt"
-import dotenv from "dotenv"
+import bcrypt from "bcrypt";
+import dotenv from "dotenv";
 dotenv.config()
 
 let userSchema = new mongoose.Schema({
@@ -26,7 +26,7 @@ let userSchema = new mongoose.Schema({
     role: {
         type: String,
         default: "user",
-        enum: ["user", "admin" , "dataEntery"]
+        enum: ["user", "admin" , "dataEntry"]
     },
     phoneNumbers:[
         {

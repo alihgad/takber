@@ -121,6 +121,11 @@ export let createOrder = async (req, res) => {
         userId,
         cart: cart.products.map(item => ({
             productId: item.productId._id,
+            stockId: item.stockId._id || item.stockId,
+            quantity: item.quantity
+        })),
+        products: cart.products.map(item => ({
+            productId: item.productId._id,
             stockId: item.stockId._id || item.stockId, // Ensure stockId is included
             quantity: item.quantity
         })),
@@ -142,9 +147,10 @@ export let createOrder = async (req, res) => {
 
     // Populate order details
     await order.populate([
-        { path: 'cart.productId', select: 'name price images' },
-        { path: 'cart.stockId', select: 'color size' },
-        { path: 'couponId', select: 'code discount' }
+        { path: 'products.productId' },
+        { path: 'cart.productId'},
+        { path: 'cart.stockId'},
+        { path: 'couponId' }
     ])
 
     return res.status(201).json({
@@ -239,7 +245,7 @@ export let getAllOrders = async (req, res) => {
     }
 
     const orders = await orderModel.find(query).skip(skip).limit(limit).populate([
-        { path: 'userId', select: 'name email' },
+        { path: 'userId' },
         
         { path: 'cart.productId' },
         { path: 'cart.stockId' },
@@ -251,7 +257,7 @@ export let getAllOrders = async (req, res) => {
     let itemCount = 0
     orders.forEach(order => {
         total += order.amount
-        itemCount += order.cart.length
+        itemCount += order.products.length
     })
 
     return res.status(200).json({ orders, total, itemCount })
@@ -406,8 +412,8 @@ export let getCategorySales = async (req, res) => {
 
     // Get orders with populated product details
     const orders = await orderModel.find(query).populate([
-        { path: 'products.productId', select: 'name price category' },
-        { path: 'cart.productId', select: 'name price category' }
+    
+        { path: 'cart.productId'}
     ])
 
     // Group by category

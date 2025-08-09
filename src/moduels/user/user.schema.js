@@ -65,7 +65,6 @@ export const resetPasswordSchema = {
 
 
 export const getAllSchema = {
-    headers : glopalSchema.headers.required(),
 }
 
 export const createUserSchema = {

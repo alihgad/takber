@@ -184,7 +184,6 @@ export let getOrder = async (req, res) => {
 
     const order = await orderModel.findOne({ _id: orderId, userId }).populate([
         
-        { path: 'products.productId' },
         { path: 'cart.productId' },
         { path: 'cart.stockId'},
         { path: 'couponId' },
@@ -215,7 +214,7 @@ export let updateOrderStatus = async (req, res) => {
 
     await order.populate([
         
-        { path: 'products.productId' },
+        
         { path: 'cart.productId' },
         { path: 'cart.stockId' },
         { path: 'couponId'},
@@ -250,9 +249,9 @@ export let getAllOrders = async (req, res) => {
 
     const orders = await orderModel.find(query).skip(skip).limit(limit).populate([
         { path: 'userId' },
-        { path: 'products.productId' },
         
-        { path: 'products.productId' },
+        
+
         { path: 'cart.productId'},
         { path: 'cart.stockId'},
         { path: 'couponId' },
@@ -301,7 +300,7 @@ export let cancelOrder = async (req, res) => {
 
     await order.populate([
         
-        { path: 'products.productId' },
+    
         { path: 'cart.productId' },
         { path: 'cart.stockId'},
         { path: 'couponId'}
@@ -419,7 +418,7 @@ export let getCategorySales = async (req, res) => {
 
     // Get orders with populated product details
     const orders = await orderModel.find(query).populate([
-        { path: 'products.productId'},
+    
         { path: 'cart.productId'}
     ])
 

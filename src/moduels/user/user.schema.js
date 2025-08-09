@@ -18,7 +18,6 @@ export const updateUserSchema = {
         phoneNumbers: Joi.array().items(Joi.string().regex(/01[0125][0-9]{8}/)),
         address: Joi.array().items(Joi.string())
     }),
-    headers : glopalSchema.headers.required(),
 
 }
 
@@ -27,7 +26,6 @@ export const updatePasswordSchema = {
         newPassword: Joi.string().regex(/^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/ , "Password must be at least 8 characters, at least one uppercase letter, at least one lowercase letter, and at least one number").required(),
         oldPassword : Joi.string().required()
     }),
-    headers : glopalSchema.headers.required(),
 
 }
 
@@ -57,7 +55,6 @@ export const forgetPasswordSchema = {
 }
 
 export const deleteUserSchema = {
-    headers : glopalSchema.headers.required(),
 }
 
 export const resetPasswordSchema = {
@@ -80,6 +77,5 @@ export const createUserSchema = {
         address: Joi.array().items(Joi.string()),
         role: Joi.string().valid( 'admin', 'dataEntry')
     }),
-    headers : glopalSchema.headers.required(),
 }
 

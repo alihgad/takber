@@ -18,8 +18,8 @@ let shippingAmountRouter = Router();
  * @apiSuccess {String} shippingAmounts[].city City name
  * @apiSuccess {Boolean} shippingAmounts[].active Active status
  */
-shippingAmountRouter.get("/user", asyncHandler(ss.getShippingAmounts));
-shippingAmountRouter.get("/admin", asyncHandler(ss.getShippingAmounts));
+shippingAmountRouter.get("/user", asyncHandler(ss.getShippingAmountsUser));
+shippingAmountRouter.get("/admin", asyncHandler(ss.getShippingAmountsAdmin));
 
 /**
  * @api {get} /shippingAmount/:id Get shipping amount by ID

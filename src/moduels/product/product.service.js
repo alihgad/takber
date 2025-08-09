@@ -325,7 +325,7 @@ export const getProudcts = asyncHandler(async (req, res, next) => {
 
 
 
-    let products = await productModel.find(filter).populate('category', 'title.arabic title.english slug.arabic slug.english').lean().select("title image _id price finalPrice isDiscounted discount  ")
+    let products = await productModel.find(filter).populate('category').lean()
 
     if (req.query.subcategory) {
         filter.subcategory = req.query.subcategory

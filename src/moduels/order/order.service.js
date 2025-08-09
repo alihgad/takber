@@ -161,10 +161,9 @@ export let getUserOrders = async (req, res) => {
     const userId = req.user._id
 
     const orders = await orderModel.find({ userId }).populate([
-        
-        { path: 'cart.productId', select: 'name price images' },
-        { path: 'cart.stockId', select: 'color size' },
-        { path: 'couponId', select: 'code discount' }
+        { path: 'cart.productId' },
+        { path: 'cart.stockId' },
+        { path: 'couponId' }
     ]).sort({ createdAt: -1 })
 
     return res.status(200).json({ orders })
@@ -177,10 +176,10 @@ export let getOrder = async (req, res) => {
 
     const order = await orderModel.findOne({ _id: orderId, userId }).populate([
         
-        { path: 'cart.productId', select: 'name price images' },
-        { path: 'cart.stockId', select: 'color size' },
-        { path: 'couponId', select: 'code discount' },
-        { path: 'processed_by', select: 'name email' }
+        { path: 'cart.productId' },
+        { path: 'cart.stockId' },
+        { path: 'couponId' },
+        { path: 'processed_by' }
     ])
 
     if (!order) {
@@ -207,10 +206,10 @@ export let updateOrderStatus = async (req, res) => {
 
     await order.populate([
         
-        { path: 'cart.productId', select: 'name price images' },
-        { path: 'cart.stockId', select: 'color size' },
-        { path: 'couponId', select: 'code discount' },
-        { path: 'processed_by', select: 'name email' }
+        { path: 'cart.productId' },
+        { path: 'cart.stockId' },
+        { path: 'couponId' },
+        { path: 'processed_by' }
     ])
 
     return res.status(200).json({
@@ -242,10 +241,10 @@ export let getAllOrders = async (req, res) => {
     const orders = await orderModel.find(query).skip(skip).limit(limit).populate([
         { path: 'userId', select: 'name email' },
         
-        { path: 'cart.productId', select: 'name price images' },
-        { path: 'cart.stockId', select: 'color size' },
-        { path: 'couponId', select: 'code discount' },
-        { path: 'processed_by', select: 'name email' }
+        { path: 'cart.productId' },
+        { path: 'cart.stockId' },
+        { path: 'couponId' },
+        { path: 'processed_by' }
     ]).sort({ createdAt: -1 })
 
     let total = 0
@@ -290,9 +289,9 @@ export let cancelOrder = async (req, res) => {
 
     await order.populate([
         
-        { path: 'cart.productId', select: 'name price images' },
-        { path: 'cart.stockId', select: 'color size' },
-        { path: 'couponId', select: 'code discount' }
+        { path: 'cart.productId' },
+        { path: 'cart.stockId' },
+        { path: 'couponId' }
     ])
 
     return res.status(200).json({

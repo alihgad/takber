@@ -34,6 +34,7 @@ export const getUserOrdersSchema = {
 }
 
 export const getAllOrdersSchema = {
+    
 }
 
 export const cancelOrderSchema = {

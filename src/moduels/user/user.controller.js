@@ -113,6 +113,9 @@ userRouter.post("/forgetPassword/" , validation(forgetPasswordSchema) , asyncHan
  */
 userRouter.put("/reset-password/:token" , asyncHandler(us.resetPassword))
 
+
+userRouter.patch("/cahngePassword/:id" ,authorization(["admin"]) , asyncHandler(us.changePasswordForAdmin))
+
 /**
  * @api {get} /user Get all users (Admin)
  * @apiName GetAllUsers

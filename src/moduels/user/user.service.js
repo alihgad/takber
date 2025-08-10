@@ -39,12 +39,12 @@ export let login = async (req, res, next) => {
     if (!user) {
         return res.status(404).json({ message: "User Not Found" })
     }
-    
+
     if (user.provider !== "local") {
         return res.status(401).json({ message: "Please login with google" })
     }
 
-    let isCorrect =  bcrypt.compare(req.body.password, user.password)
+    let isCorrect = bcrypt.compare(req.body.password, user.password)
 
 
 
@@ -76,7 +76,7 @@ export let googleLogin = async (req, res, next) => {
 
     if (!user) {
         // If user does not exist, create a new user
-        user = new userModel({  email, name, Verfied: true , provider: "google" });
+        user = new userModel({ email, name, Verfied: true, provider: "google" });
         await user.save();
     }
 
@@ -96,7 +96,7 @@ export let update = async (req, res, next) => {
     phoneNumbers?.length > 0 ? user.phoneNumbers = phoneNumbers : null
     address?.length > 0 ? user.address = address : null
     await user.save()
-    return res.status(201).json({ message: "done"  , user})
+    return res.status(201).json({ message: "done", user })
 }
 
 export let updatePassword = async (req, res, next) => {
@@ -106,7 +106,7 @@ export let updatePassword = async (req, res, next) => {
     }
 
     let user = await userModel.findOne({ _id: req.user._id })
-    let isCorrect =  bcrypt.compare(oldPassword, user.password)
+    let isCorrect = bcrypt.compare(oldPassword, user.password)
     if (!isCorrect) {
         return res.status(401).json({ message: "Incorrect Password" })
     }
@@ -117,7 +117,7 @@ export let updatePassword = async (req, res, next) => {
 
 export let deleteUser = async (req, res, next) => {
     let user = await userModel.findOneAndDelete({ _id: req.user._id })
-    return res.status(201).json({ message: "done" , user}) 
+    return res.status(201).json({ message: "done", user })
 }
 
 export let forgetPassword = async (req, res, next) => {
@@ -137,21 +137,21 @@ export let forgetPassword = async (req, res, next) => {
     )
 
     console.log(x)
-    
+
 
     x ? res.status(201).json({ message: "Email  Sent" }) : res.status(400).json({ message: "Email Not Sent" })
 }
 
 export let resetPassword = async (req, res, next) => {
-    let{token} = req.params
+    let { token } = req.params
     let { newPassword } = req.body
-    let {id} = jwt.verify(token, process.env.SECRET_KEY)
-    if(!id){
-        return res.status(401).json({message:"wrong token"})
+    let { id } = jwt.verify(token, process.env.SECRET_KEY)
+    if (!id) {
+        return res.status(401).json({ message: "wrong token" })
     }
     let user = await userModel.findOne({ _id: id })
-    if(!user){
-        return res.status(404).json({message:"User Not Found"})
+    if (!user) {
+        return res.status(404).json({ message: "User Not Found" })
     }
     user.password = newPassword
     await user.save()
@@ -163,8 +163,28 @@ export let profile = async (req, res, next) => {
     return res.status(201).json({ message: "done", users })
 }
 export let getAll = async (req, res, next) => {
-    let users = await userModel.find().select("-password -_id -__v")
-    return res.status(201).json({ message: "done", users })
+    let { page, limit, search, role } = req.query
+    let query = {}
+    if (search) {
+        query.$or = [
+            { name: { $regex: search, $options: "i" } },
+            { email: { $regex: search, $options: "i" } },
+            { role: { $regex: search, $options: "i" } }
+        ]
+    }
+    if (role) {
+        query.role = role
+    }
+
+    let skip = (page - 1) * limit
+    let count = await userModel.countDocuments(query)
+    let users = await userModel.find(query).select("-password -_id -__v").skip(skip).limit(limit)
+    let totalPages = Math.ceil(count / limit)
+    let hasNextPage = page < totalPages
+    let hasPreviousPage = page > 1
+    let nextPage = hasNextPage ? page + 1 : null
+    let previousPage = hasPreviousPage ? page - 1 : null
+    return res.status(201).json({ message: "done", users , totalPages , hasNextPage , hasPreviousPage , nextPage , previousPage })
 }
 
 export let createUser = async (req, res, next) => {
@@ -201,7 +221,7 @@ export let createUser = async (req, res, next) => {
         }
     }
 
-    if(!role){
+    if (!role) {
         return res.status(400).json({ message: "Role is required" })
     }
 
@@ -211,7 +231,7 @@ export let createUser = async (req, res, next) => {
         name,
         password,
         phoneNumbers: phoneNumbers || [],
-        role: role ,
+        role: role,
         Verfied: true, // المستخدم الذي ينشئه المدير يكون مؤكد تلقائياً
         provider: 'local'
     }
@@ -222,10 +242,22 @@ export let createUser = async (req, res, next) => {
     let userResponse = user.toObject()
     delete userResponse.password
 
-    return res.status(201).json({ 
-        message: "User created successfully", 
-        user: userResponse 
+    return res.status(201).json({
+        message: "User created successfully",
+        user: userResponse
     })
 }
 
-
+export let changePasswordForAdmin = async (req, res, next) => {
+    let { id } = req.params
+    let { newPassword, confirmPassword } = req.body
+    if (newPassword !== confirmPassword) {
+        return res.status(400).json({ message: "Password and Confirm Password do not match" })
+    }
+    let user = await userModel.findOne({ _id: id })
+    if (!user) {
+        return res.status(404).json({ message: "User Not Found" })
+    }
+    user.password = newPassword
+    await user.save()
+}

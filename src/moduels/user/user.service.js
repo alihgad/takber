@@ -167,7 +167,7 @@ export let resetPassword = async (req, res, next) => {
 }
 
 export let profile = async (req, res, next) => {
-    let users = await userModel.findOne({ _id: req.user._id }).select("-password -_id -__v")
+    let users = await userModel.findOne({ _id: req.user._id })
     return res.status(201).json({ message: "done", users })
 }
 export let getAll = async (req, res, next) => {
@@ -186,7 +186,7 @@ export let getAll = async (req, res, next) => {
 
     let skip = (page - 1) * limit
     let count = await userModel.countDocuments(query)
-    let users = await userModel.find(query).select("-password -_id -__v").skip(skip).limit(limit)
+    let users = await userModel.find(query).skip(skip).limit(limit)
     let totalPages = Math.ceil(count / limit)
     let hasNextPage = page < totalPages
     let hasPreviousPage = page > 1

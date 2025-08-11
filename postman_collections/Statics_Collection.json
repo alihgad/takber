@@ -1,0 +1,584 @@
+{
+	"info": {
+		"_postman_id": "statics-collection",
+		"name": "Statistics",
+		"description": "Statistics and Analytics APIs for Takbeer e-commerce platform",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Sales Summary",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/statics/sales-summary?startDate=2024-01-01&endDate=2024-12-31&status=delivered",
+					"host": ["{{base_url}}"],
+					"path": ["statics", "sales-summary"],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "2024-01-01",
+							"description": "Start date for filtering (YYYY-MM-DD)"
+						},
+						{
+							"key": "endDate",
+							"value": "2024-12-31",
+							"description": "End date for filtering (YYYY-MM-DD)"
+						},
+						{
+							"key": "status",
+							"value": "delivered",
+							"description": "Order status filter (pending/shipped/delivered/cancelled)"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sales Summary - Current Month",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/statics/sales-summary?startDate={{current_month_start}}&endDate={{current_month_end}}",
+					"host": ["{{base_url}}"],
+					"path": ["statics", "sales-summary"],
+					"query": [
+						{
+							"key": "startDate",
+							"value": "{{current_month_start}}",
+							"description": "First day of current month"
+						},
+						{
+							"key": "endDate",
+							"value": "{{current_month_end}}",
+							"description": "Last day of current month"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Top Categories by Sales",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/statics/top-categories?limit=10&sortBy=sales",
+					"host": ["{{base_url}}"],
+					"path": ["statics", "top-categories"],
+					"query": [
+						{
+							"key": "limit",
+							"value": "10",
+							"description": "Number of categories to return (1-50)"
+						},
+						{
+							"key": "sortBy",
+							"value": "sales",
+							"description": "Sort by 'sales' or 'quantity'"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Top Categories by Quantity",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/statics/top-categories?limit=15&sortBy=quantity&startDate=2024-01-01&endDate=2024-12-31",
+					"host": ["{{base_url}}"],
+					"path": ["statics", "top-categories"],
+					"query": [
+						{
+							"key": "limit",
+							"value": "15",
+							"description": "Number of categories to return"
+						},
+						{
+							"key": "sortBy",
+							"value": "quantity",
+							"description": "Sort by quantity sold"
+						},
+						{
+							"key": "startDate",
+							"value": "2024-01-01",
+							"description": "Start date filter"
+						},
+						{
+							"key": "endDate",
+							"value": "2024-12-31",
+							"description": "End date filter"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Top Products by Sales",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/statics/top-products?limit=20&sortBy=sales",
+					"host": ["{{base_url}}"],
+					"path": ["statics", "top-products"],
+					"query": [
+						{
+							"key": "limit",
+							"value": "20",
+							"description": "Number of products to return (1-50)"
+						},
+						{
+							"key": "sortBy",
+							"value": "sales",
+							"description": "Sort by 'sales' or 'quantity'"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Top Products by Quantity",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/statics/top-products?limit=10&sortBy=quantity",
+					"host": ["{{base_url}}"],
+					"path": ["statics", "top-products"],
+					"query": [
+						{
+							"key": "limit",
+							"value": "10",
+							"description": "Number of products to return"
+						},
+						{
+							"key": "sortBy",
+							"value": "quantity",
+							"description": "Sort by quantity sold"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Top Products by Category",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/statics/top-products?categoryId={{category_id}}&limit=15&sortBy=sales",
+					"host": ["{{base_url}}"],
+					"path": ["statics", "top-products"],
+					"query": [
+						{
+							"key": "categoryId",
+							"value": "{{category_id}}",
+							"description": "Filter by specific category ID"
+						},
+						{
+							"key": "limit",
+							"value": "15",
+							"description": "Number of products to return"
+						},
+						{
+							"key": "sortBy",
+							"value": "sales",
+							"description": "Sort by sales amount"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sales Timeline - Daily",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/statics/sales-timeline?period=daily&startDate=2024-12-01&endDate=2024-12-31",
+					"host": ["{{base_url}}"],
+					"path": ["statics", "sales-timeline"],
+					"query": [
+						{
+							"key": "period",
+							"value": "daily",
+							"description": "Time period: 'daily', 'weekly', or 'monthly'"
+						},
+						{
+							"key": "startDate",
+							"value": "2024-12-01",
+							"description": "Start date (required)"
+						},
+						{
+							"key": "endDate",
+							"value": "2024-12-31",
+							"description": "End date (required)"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sales Timeline - Weekly",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/statics/sales-timeline?period=weekly&startDate=2024-01-01&endDate=2024-12-31&status=delivered",
+					"host": ["{{base_url}}"],
+					"path": ["statics", "sales-timeline"],
+					"query": [
+						{
+							"key": "period",
+							"value": "weekly",
+							"description": "Weekly sales timeline"
+						},
+						{
+							"key": "startDate",
+							"value": "2024-01-01",
+							"description": "Start date for analysis"
+						},
+						{
+							"key": "endDate",
+							"value": "2024-12-31",
+							"description": "End date for analysis"
+						},
+						{
+							"key": "status",
+							"value": "delivered",
+							"description": "Filter by order status"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Sales Timeline - Monthly",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/statics/sales-timeline?period=monthly&startDate=2024-01-01&endDate=2024-12-31",
+					"host": ["{{base_url}}"],
+					"path": ["statics", "sales-timeline"],
+					"query": [
+						{
+							"key": "period",
+							"value": "monthly",
+							"description": "Monthly sales timeline"
+						},
+						{
+							"key": "startDate",
+							"value": "2024-01-01",
+							"description": "Start of year"
+						},
+						{
+							"key": "endDate",
+							"value": "2024-12-31",
+							"description": "End of year"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Customer Insights",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/statics/customer-insights?limit=25&minOrders=2",
+					"host": ["{{base_url}}"],
+					"path": ["statics", "customer-insights"],
+					"query": [
+						{
+							"key": "limit",
+							"value": "25",
+							"description": "Number of top customers to return (1-100)"
+						},
+						{
+							"key": "minOrders",
+							"value": "2",
+							"description": "Minimum number of orders for inclusion"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Customer Insights - High Value",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/statics/customer-insights?limit=10&minOrders=5&startDate=2024-01-01&endDate=2024-12-31",
+					"host": ["{{base_url}}"],
+					"path": ["statics", "customer-insights"],
+					"query": [
+						{
+							"key": "limit",
+							"value": "10",
+							"description": "Top 10 customers only"
+						},
+						{
+							"key": "minOrders",
+							"value": "5",
+							"description": "Customers with at least 5 orders"
+						},
+						{
+							"key": "startDate",
+							"value": "2024-01-01",
+							"description": "Start date for filtering"
+						},
+						{
+							"key": "endDate",
+							"value": "2024-12-31",
+							"description": "End date for filtering"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Dashboard Stats - Monthly",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/statics/dashboard?period=month",
+					"host": ["{{base_url}}"],
+					"path": ["statics", "dashboard"],
+					"query": [
+						{
+							"key": "period",
+							"value": "month",
+							"description": "Time period: 'today', 'week', 'month', 'year', or 'all'"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Dashboard Stats - Today",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/statics/dashboard?period=today",
+					"host": ["{{base_url}}"],
+					"path": ["statics", "dashboard"],
+					"query": [
+						{
+							"key": "period",
+							"value": "today",
+							"description": "Today's statistics only"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Dashboard Stats - Weekly",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/statics/dashboard?period=week",
+					"host": ["{{base_url}}"],
+					"path": ["statics", "dashboard"],
+					"query": [
+						{
+							"key": "period",
+							"value": "week",
+							"description": "Last 7 days statistics"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Dashboard Stats - Yearly",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/statics/dashboard?period=year",
+					"host": ["{{base_url}}"],
+					"path": ["statics", "dashboard"],
+					"query": [
+						{
+							"key": "period",
+							"value": "year",
+							"description": "Last 12 months statistics"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Dashboard Stats - All Time",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/statics/dashboard?period=all",
+					"host": ["{{base_url}}"],
+					"path": ["statics", "dashboard"],
+					"query": [
+						{
+							"key": "period",
+							"value": "all",
+							"description": "All time statistics"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Set current month dates",
+					"const now = new Date();",
+					"const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);",
+					"const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);",
+					"",
+					"pm.environment.set('current_month_start', firstDay.toISOString().split('T')[0]);",
+					"pm.environment.set('current_month_end', lastDay.toISOString().split('T')[0]);",
+					"",
+					"// Set yesterday date",
+					"const yesterday = new Date();",
+					"yesterday.setDate(yesterday.getDate() - 1);",
+					"pm.environment.set('yesterday', yesterday.toISOString().split('T')[0]);"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "admin_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "category_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

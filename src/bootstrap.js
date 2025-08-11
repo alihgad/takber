@@ -8,6 +8,7 @@ import { cartRouter } from "./moduels/cart/cart.controller.js"
 import { orderRouter } from "./moduels/order/order.controller.js"
 import wishlistRouter from "./moduels/wishList/whisList.controller.js"
 import shippingAmountRouter from "./moduels/shippingAmount/shippingAmount.controller.js"
+import { staticsRouter } from "./moduels/statics/statics.controller.js"
 
 export default (app)=>{
 
@@ -22,4 +23,5 @@ export default (app)=>{
     app.use("/order" , orderRouter)
     app.use("/wishlist" , wishlistRouter)
     app.use("/shippingAmount" , shippingAmountRouter)
+    app.use("/statics" , staticsRouter)
 }

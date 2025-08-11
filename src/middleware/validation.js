@@ -5,6 +5,8 @@ const validation = (schema) => {
     return asyncHandler(
         
         async (req, res, next) => {
+
+            
             if (req.body.title && typeof req.body.title === 'string') {
                 req.body.title = JSON.parse(req.body.title)
             }
@@ -12,6 +14,7 @@ const validation = (schema) => {
                 req.body.description = JSON.parse(req.body.description)
             }
 
+            
             for (const key in schema) {
 
                 const { error } = schema[key].validate(req[key], { abortEarly: false });

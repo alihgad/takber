@@ -1,16 +1,119 @@
-# Takbeer Authentication APIs Documentation
+# Takbeer API Collections Documentation
 
-This collection contains all authentication-related APIs for the Takbeer e-commerce platform.
+This directory contains all API collections for the Takbeer e-commerce platform.
+
+## Available Collections
+
+### 1. **Statistics Collection** 📊
+- **File**: `Statics_Collection.json`
+- **Description**: Comprehensive analytics and statistics APIs for sales, products, categories, and customer insights
+- **Endpoints**: 17 APIs covering sales summaries, top performers, timeline analytics, and dashboard statistics
+
+### 2. **Authentication Collection** 🔐
+- **File**: `Authentication_Collection.json`
+- **Description**: User authentication, registration, login, and profile management APIs
+
+### 3. **Orders Collection** 📦
+- **File**: `Orders_Collection.json`
+- **Description**: Order management, creation, tracking, and status updates APIs
+
+### 4. **Products Collection** 🛍️
+- **File**: `Products_Collection.json`
+- **Description**: Product catalog management, CRUD operations, and search APIs
+
+### 5. **Categories Collection** 📁
+- **File**: `Categories_Collection.json`
+- **Description**: Category management and organization APIs
+
+### 6. **Subcategories Collection** 📂
+- **File**: `Subcategories_Collection.json`
+- **Description**: Subcategory management and organization APIs
+
+### 7. **Cart Collection** 🛒
+- **File**: `Cart_Collection.json`
+- **Description**: Shopping cart management APIs
+
+### 8. **Wishlist Collection** ❤️
+- **File**: `Wishlist_Collection.json`
+- **Description**: User wishlist management APIs
+
+### 9. **Stock Collection** 📦
+- **File**: `Stock_Collection.json`
+- **Description**: Inventory and stock management APIs
+
+### 10. **Coupons Collection** 🎫
+- **File**: `Coupons_Collection.json`
+- **Description**: Discount codes and coupon management APIs
+
+### 11. **Shipping Amount Collection** 🚚
+- **File**: `ShippingAmount_Collection.json`
+- **Description**: Shipping cost calculation and management APIs
 
 ## Setup Instructions
 
-1. Import the `Authentication_Collection.json` file into Postman
+1. Import any collection file (`.json`) into Postman
 2. Set up the environment variables in your Postman environment:
    - `base_url`: Your API base URL (e.g., `http://localhost:3000`)
    - `admin_token`: JWT token for admin user (obtained after admin login)
    - `user_token`: JWT token for regular user (obtained after user login)
    - `verification_token`: Email verification token (received via email)
    - `reset_token`: Password reset token (received via email)
+   - `category_id`: Sample category ID for testing (used in statistics)
+
+## Statistics Collection Features 📈
+
+The Statistics Collection provides comprehensive analytics for your e-commerce platform:
+
+### Key APIs:
+- **Sales Summary**: Total sales, orders, items sold, and average order value
+- **Top Categories**: Best performing categories by sales or quantity
+- **Top Products**: Best selling products with filtering options
+- **Sales Timeline**: Daily, weekly, or monthly sales trends
+- **Customer Insights**: Customer behavior analysis and top customers
+- **Dashboard Statistics**: Comprehensive overview for admin dashboard
+
+### Sample Requests:
+- Get monthly sales summary: `GET /statics/sales-summary?startDate=2024-01-01&endDate=2024-01-31`
+- Top 10 products by sales: `GET /statics/top-products?limit=10&sortBy=sales`
+- Weekly sales timeline: `GET /statics/sales-timeline?period=weekly&startDate=2024-01-01&endDate=2024-12-31`
+- Customer insights: `GET /statics/customer-insights?limit=20&minOrders=2`
+
+### Filtering Options:
+- **Date Range**: Filter by start and end dates
+- **Order Status**: Filter by order status (pending/shipped/delivered/cancelled)
+- **Categories**: Filter products by specific category
+- **Limits**: Control number of results returned
+- **Sorting**: Sort by sales amount or quantity
+
+## Quick Start Guide 🚀
+
+### For Statistics Testing:
+1. Import `Authentication_Collection.json` and `Statics_Collection.json`
+2. Login as admin using Authentication Collection
+3. Copy the token to `admin_token` environment variable
+4. Test any Statistics API (all require admin authentication)
+
+### Recommended Testing Order:
+1. **Dashboard Stats** - Get overview: `GET /statics/dashboard?period=month`
+2. **Sales Summary** - Get sales overview: `GET /statics/sales-summary`
+3. **Top Categories** - See best categories: `GET /statics/top-categories?limit=5`
+4. **Top Products** - See best products: `GET /statics/top-products?limit=10`
+5. **Customer Insights** - Analyze customers: `GET /statics/customer-insights?limit=15`
+
+## Environment Variables Reference
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `base_url` | API base URL | `http://localhost:3000` |
+| `admin_token` | Admin JWT token | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` |
+| `user_token` | User JWT token | `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...` |
+| `category_id` | Sample category ID | `507f1f77bcf86cd799439011` |
+| `current_month_start` | Auto-generated | `2024-12-01` |
+| `current_month_end` | Auto-generated | `2024-12-31` |
+
+---
+
+# Authentication APIs Documentation
 
 ## API Endpoints
 

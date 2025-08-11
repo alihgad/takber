@@ -120,6 +120,14 @@ export let deleteUser = async (req, res, next) => {
     return res.status(201).json({ message: "done", user })
 }
 
+export let deleteUserForAdmin = async (req, res, next) => {
+    let { id } = req.params
+    let user = await userModel.findOneAndDelete({ _id: id })
+    if(!user){
+        return res.status(404).json({ message: "User Not Found" })
+    }
+    return res.status(201).json({ message: "done", user })
+}
 export let forgetPassword = async (req, res, next) => {
     let { email } = req.body
     let user = await userModel.findOne({ email })

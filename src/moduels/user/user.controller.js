@@ -89,6 +89,7 @@ userRouter.put("/userUpdatePassword/" , validation(updatePasswordSchema) , authe
  * @apiSuccess {Object} user Deleted user object
  */
 userRouter.delete("/userDelete" , validation(deleteUserSchema), authentication, asyncHandler(us.deleteUser))
+userRouter.delete("/userDelete/:id" , validation(deleteUserSchema), authentication, authorization(['admin']), asyncHandler(us.deleteUserForAdmin))
 
 /**
  * @api {post} /user/forgetPassword Forgot password

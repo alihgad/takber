@@ -9,20 +9,11 @@ import categoryModel from "../../db/models/category.model.js"
 
 // Create new order from cart
 export let createOrder = async (req, res) => {
-    const { address, phoneNumbers, city, couponId, products } = req.body
-    const userId = req.user._id
-    let cart = null
+    const { address, phoneNumbers, city, couponId, products , name  , email } = req.body
 
-    if (userId) {
-        // Get user's cart
-        cart = await cartModel.findOne({ userId }).populate([
-            
-            { path: 'products.stockId', select: 'color size quantity' }
-        ])
-    }
-
+    let cart 
     // Handle fallback to products from request body
-    if ((!cart || cart.products.length === 0) && products && products.length > 0) {
+    if (products && products.length > 0) {
         // Create a temporary cart structure from products
         const populatedProducts = await Promise.all(
             products.map(async (item) => {
@@ -30,8 +21,8 @@ export let createOrder = async (req, res) => {
                 const stock = await stockModel.findById(item.stockId).select('color size quantity');
                 
                 return {
-                    productId: product,
-                    stockId: stock,
+                    product: product,
+                    stock: stock,
                     quantity: item.quantity
                 };
             })
@@ -50,18 +41,18 @@ export let createOrder = async (req, res) => {
 
     for (let item of cart.products) {
         // Validate product and price
-        if (!item.productId || !item.productId.price) {
+        if (!item.product || !item.product.price) {
             return res.status(400).json({
                 message: `Invalid product data for item: ${item.productId?.name || 'Unknown'}`
             });
         }
 
-        const price = parseFloat(item.productId.price);
+        const price = parseFloat(item.product.price);
         const quantity = parseInt(item.quantity);
 
         if (isNaN(price) || isNaN(quantity)) {
             return res.status(400).json({
-                message: `Invalid price or quantity for product: ${item.productId.name}`
+                message: `Invalid price or quantity for product: ${item.product.name}`
             });
         }
 
@@ -104,10 +95,10 @@ export let createOrder = async (req, res) => {
 
     // Check stock availability and update stock
     for (let item of cart.products) {
-        const stock = await stockModel.findById(item.stockId._id || item.stockId)
+        const stock = await stockModel.findById(item.stock._id || item.stock)
         if (!stock || stock.quantity < item.quantity) {
             return res.status(400).json({
-                message: `Insufficient stock for product: ${item.productId.name}`
+                message: `Insufficient stock for product: ${item.product.name}`
             })
         }
 
@@ -118,27 +109,23 @@ export let createOrder = async (req, res) => {
 
     // Create order with proper structure
     const order = await orderModel.create({
-        userId,
-        cart: cart.products.map(item => ({
-            productId: item.productId._id,
-            stockId: item.stockId._id || item.stockId,
-            quantity: item.quantity
-        })),
-        cartId: cart._id || null,
-        amount: Math.round(totalAmount * 100) / 100, // Round to 2 decimal places
+        name,
+        email,
         address,
         phoneNumbers,
         city,
         couponId,
-        discount: Math.round(discount * 100) / 100,
-        shippingAmount: Math.round(shippingAmount * 100) / 100
+        discount: discount,
+        shippingAmount: shippingAmount,
+        cart: cart.products.map(item => ({
+            productId: item.product._id,
+            stockId: item.stock._id || item.stock,
+            quantity: item.quantity
+        })),
+        cartId: cart._id || null,
+        amount: totalAmount, // Round to 2 decimal places
     })
 
-    // Clear the cart only if it's a real cart (not from products array)
-    if (cart._id) {
-        cart.products = []
-        await cart.save()
-    }
 
     // Populate order details
     await order.populate([

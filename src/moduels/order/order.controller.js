@@ -30,7 +30,7 @@ export let orderRouter = Router()
  * @apiSuccess {Object} order Created order details with populated product and cart information
  * @apiError {String} message Error message if cart is empty or stock insufficient
  */
-orderRouter.post("/", validation(createOrderSchema), authentication, asyncHandler(os.createOrder))
+orderRouter.post("/", validation(createOrderSchema), asyncHandler(os.createOrder))
 
 /**
  * @api {get} /order/user Get user's orders

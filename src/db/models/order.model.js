@@ -52,6 +52,14 @@ let orderSchema = new mongoose.Schema({
         ref: "Cart",
         default: null
     },
+    name:{
+        type: String,
+        required: true
+    },
+    email:{
+        type: String,
+        required: true
+    },
     cart:[
         {
             productId: {

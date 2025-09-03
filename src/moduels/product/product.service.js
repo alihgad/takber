@@ -270,7 +270,7 @@ export const changePhoto = asyncHandler(async (req, res, next) => {
 });
 
 export const getfullProudcts = asyncHandler(async (req, res, next) => {
-  let { brand, category, subcategory } = req.query;
+  let { brand, category, subcategory, search } = req.query;
 
   let query = {};
 
@@ -286,6 +286,13 @@ export const getfullProudcts = asyncHandler(async (req, res, next) => {
     query.subcategory = subcategory;
   }
 
+  if (search) {
+    query.$or = [
+      { "title.arabic": { $regex: search, $options: "i" } },
+      { "title.english": { $regex: search, $options: "i" } },
+    ];
+  }
+
   // If both category and subcategory are provided, find products that match both
   // If only category is provided, find products with that category (with or without subcategory)
   // If only subcategory is provided, find products with that subcategory
@@ -295,7 +302,6 @@ export const getfullProudcts = asyncHandler(async (req, res, next) => {
       $and: [{ category: category }, { subcategory: subcategory }],
     };
   }
-  //   console.log("Query:", query);
 
   let products = await productModel.find(query).lean();
 

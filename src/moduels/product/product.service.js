@@ -381,7 +381,7 @@ export const deleteProudct = asyncHandler(async (req, res, next) => {
 
 
 export const getNewArrival = asyncHandler(async (req, res, next) => {
-    let products = await productModel.find().sort({ updatedAt: -1 }).limit(10).populate(['category', 'subcategory']).lean()
+    let products = await productModel.find({updatedAt: { $gt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) }}).sort({ updatedAt: -1 }).limit(10).populate(['category', 'subcategory']).lean()
 
     let result = await getProductStocks(products)
 

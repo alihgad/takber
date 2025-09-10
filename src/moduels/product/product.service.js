@@ -142,7 +142,15 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
   }
 
   if (discount !== undefined) {
-    product.isDiscounted = true;
+    if (discount < 0 || discount > 100) {
+      return next(new Error("Discount must be between 0 and 100", { cause: 400 }));
+    }
+    if(discount > 0 ){
+      product.isDiscounted = true;
+    }else{
+      product.isDiscounted = false;
+    }
+    
     product.discount = discount;
   }
 

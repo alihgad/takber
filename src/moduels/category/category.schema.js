@@ -11,7 +11,9 @@ export let createCategory = {
             arabic: Joi.string().required(),
             english: Joi.string().required()
         }).required(),
-
+    }),
+    files: Joi.object({
+        image: Joi.array().items(glopalSchema.file).required(),
     }),
 }
 
@@ -27,15 +29,18 @@ export let updateCategory = {
     params: Joi.object({
         id: glopalSchema.id.required(),
     }),
+    files: Joi.object({
+        image: Joi.array().items(glopalSchema.file),
+    }),
 }
 
-export let getCategory={
+export let getCategory = {
     params: Joi.object({
         id: glopalSchema.id.required(),
     }),
 }
 
-export let deleteCategory={
+export let deleteCategory = {
     params: Joi.object({
         id: glopalSchema.id.required(),
     }),

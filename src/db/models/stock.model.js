@@ -17,7 +17,7 @@ let stockSchema = new mongoose.Schema({
     size: {
         type: String,
         required: true,
-        enum: ["XS","S", "M", "L", "XL", "XXL"]
+        enum: ["XS","S", "M", "L", "XL", "XXL" , "XXXL" , "4XL", "5XL" , "6XL" , "7XL" ]
     }
 
 })

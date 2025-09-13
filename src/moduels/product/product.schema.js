@@ -4,8 +4,8 @@ import glopalSchema from "../../services/glopalSchema.js"
 export const createProudctSchema = {
     body: joi.object({
         title: joi.object({
-            arabic: joi.string().required().min(3).max(10),
-            english: joi.string().required().min(3).max(10)
+            arabic: joi.string().required(),
+            english: joi.string().required(),
         }).required(),
         description: joi.object({
             arabic: joi.string().required(),
@@ -14,7 +14,7 @@ export const createProudctSchema = {
         price: joi.number().required(),
         discount: joi.number().max(100),
         category: glopalSchema.id,
-        subcategory: glopalSchema.id,
+        subcategory: glopalSchema.id.optional(),
         brand: joi.string().required()
     }).required(),
 

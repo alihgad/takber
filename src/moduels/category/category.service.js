@@ -5,9 +5,15 @@ import categoryModel from "../../db/models/category.model.js"
 
 export const createCategory = async (req, res, next) => {
     let customId = nanoid(5)
-  
 
-    
+    let image = {}
+    if (req.files && req.files.image && req.files.image[0]) {
+        let { secure_url, public_id } = await cloudinary.uploader.upload(req.files.image[0].path, {
+            folder: `Takbeer/category/${customId}`
+        })
+        image = { secure_url, public_id }
+        req.folder = `Takbeer/category/${customId}`
+    }
 
     let category = await categoryModel.create({
         title: {
@@ -18,11 +24,13 @@ export const createCategory = async (req, res, next) => {
             arabic: slugify(req.body.title.arabic, { replacement: '-', lower: true }),
             english: slugify(req.body.title.english, { replacement: '-', lower: true })
         },
-       
+        description: {
+            arabic: req.body.description.arabic,
+            english: req.body.description.english
+        },
+        image,
         customId,
         createdBy: req.user._id,
-
-
     })
 
     return res.status(201).json({ message: "done", category })
@@ -39,10 +47,10 @@ export const updateCategory = async (req, res, next) => {
     }
 
 
-    if (req.file) {
+    if (req.files && req.files.image && req.files.image[0]) {
         await cloudinary.uploader.destroy(category.image.public_id)
 
-        let { secure_url, public_id} = await cloudinary.uploader.upload(req.file.path, {
+        let { secure_url, public_id} = await cloudinary.uploader.upload(req.files.image[0].path, {
             folder: `Takbeer/category/${category.customId}`
         })
 

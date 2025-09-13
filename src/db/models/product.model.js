@@ -149,17 +149,7 @@ const deleting = async (doc) => {
         await stockModel.deleteMany({ productId: doc._id });
         console.log("Deleted product stocks:", doc._id);
 
-        let catCustoumId = await categoryModel.findOne({ _id: doc.category }).select("customId");
-        if (catCustoumId?.customId && doc?.customId) {
-            const path = `Takbeer/category/${catCustoumId?.customId}/products/${doc?.customId}`;
-            await cloudinary.api.delete_resources_by_prefix(path);
-            console.log("Deleted Cloudinary resources:", path);
-
-            await cloudinary.api.delete_folder(path);
-            console.log("Deleted folder:", path);
-        } else {
-            console.log("No customId found for category or product, skipping Cloudinary deletion.");
-        }
+        
 
 
 

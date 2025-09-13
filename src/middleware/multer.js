@@ -1,5 +1,7 @@
 import multer from "multer";
 import dotenv from "dotenv";
+import fs from "fs";
+import path from "path";
 
 
 
@@ -10,9 +12,7 @@ export const multerHost = (path) => {
         filename: (req, file, cb) => {
             cb(null, file.originalname + "-" + Date.now())
         },
-        destination: (req, file, cb) => {
-            cb(null, path)
-        }
+        destination: path
     })
     return multer({ storage })
 }

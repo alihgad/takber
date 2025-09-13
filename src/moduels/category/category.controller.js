@@ -5,7 +5,7 @@ import authentication from "../../middleware/authentication.js";
 import authorization from "../../middleware/authorization.js";
 import { asyncHandler } from "../../utils/ErrorHandling.js";
 import validation from "../../middleware/validation.js";
-import * as csSchema from "./category.schema.js"
+import * as csSchema from "./category.schema.js";
 
 let categoryRouter = Router()
 

@@ -9,9 +9,9 @@ import categoryModel from "../../db/models/category.model.js"
 
 // Create new order from cart
 export let createOrder = async (req, res) => {
-    const { address, phoneNumbers, city, couponId, products , name  , email } = req.body
+    const { address, phoneNumbers, city, couponId, products, name, email } = req.body
 
-    let cart 
+    let cart
     // Handle fallback to products from request body
     if (products && products.length > 0) {
         // Create a temporary cart structure from products
@@ -19,7 +19,7 @@ export let createOrder = async (req, res) => {
             products.map(async (item) => {
                 const product = await productModel.findById(item.productId).select('name price images');
                 const stock = await stockModel.findById(item.stockId).select('color size quantity');
-                
+
                 return {
                     product: product,
                     stock: stock,
@@ -27,7 +27,7 @@ export let createOrder = async (req, res) => {
                 };
             })
         );
-        
+
         cart = { products: populatedProducts };
     }
 
@@ -129,8 +129,8 @@ export let createOrder = async (req, res) => {
 
     // Populate order details
     await order.populate([
-        { path: 'cart.productId'},
-        { path: 'cart.stockId'},
+        { path: 'cart.productId' },
+        { path: 'cart.stockId' },
         { path: 'couponId' }
     ])
 
@@ -161,8 +161,8 @@ export let getOrder = async (req, res) => {
     const { orderId } = req.params
     const userId = req.user._id
 
-    const order = await orderModel.findOne({ _id: orderId, userId }).populate([
-        
+    const order = await orderModel.findOne({ _id: orderId }).populate([
+
         { path: 'cart.productId' },
         { path: 'cart.stockId' },
         { path: 'couponId' },
@@ -193,7 +193,7 @@ export let updateOrderStatus = async (req, res) => {
     await order.save()
 
     await order.populate([
-        
+
         { path: 'cart.productId' },
         { path: 'cart.stockId' },
         { path: 'couponId' },
@@ -208,7 +208,7 @@ export let updateOrderStatus = async (req, res) => {
 
 // Get all orders (Admin only)
 export let getAllOrders = async (req, res) => {
-    
+
     let { page, limit, filter, from, to } = req.query
     if (!limit) {
         limit = 10
@@ -238,7 +238,7 @@ export let getAllOrders = async (req, res) => {
 
     let total = 0
     let itemCount = 0
-    
+
     orders.forEach(order => {
         total += order.amount
         itemCount += order.cart.length
@@ -278,7 +278,7 @@ export let cancelOrder = async (req, res) => {
     await order.save()
 
     await order.populate([
-        
+
         { path: 'cart.productId' },
         { path: 'cart.stockId' },
         { path: 'couponId' }
@@ -396,8 +396,8 @@ export let getCategorySales = async (req, res) => {
 
     // Get orders with populated product details
     const orders = await orderModel.find(query).populate([
-    
-        { path: 'cart.productId'}
+
+        { path: 'cart.productId' }
     ])
 
     // Group by category

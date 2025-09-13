@@ -20,7 +20,11 @@ export const createCategory = async (req, res, next) => {
             arabic: slugify(req.body.title.arabic, { replacement: '-', lower: true }),
             english: slugify(req.body.title.english, { replacement: '-', lower: true })
         },
-       
+        description: {
+            arabic: req.body.description.arabic,
+            english: req.body.description.english
+        },
+        image,
         customId,
         createdBy: req.user._id,
         imagePath 

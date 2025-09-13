@@ -37,6 +37,20 @@ let categorySchema = new mongoose.Schema(
         max: 10,
       },
     },
+    description: {
+      arabic: {
+        type: String,
+        required: true,
+      },
+      english: {
+        type: String,
+        required: true,
+      },
+    },
+    imagePath:{
+      type: String,
+      required: false
+    },
 
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,

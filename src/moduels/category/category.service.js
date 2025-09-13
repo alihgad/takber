@@ -2,12 +2,14 @@ import { v2 as cloudinary } from "cloudinary"
 import { nanoid } from "nanoid"
 import slugify from "slugify"
 import categoryModel from "../../db/models/category.model.js"
+import { deleteImage } from "../../services/deleteImage.js"
 
 export const createCategory = async (req, res, next) => {
     let customId = nanoid(5)
-  
-
     
+    if(req.image){
+        let imagePath = req.image.path + "/" + req.image.filename
+    }
 
     let category = await categoryModel.create({
         title: {
@@ -21,7 +23,7 @@ export const createCategory = async (req, res, next) => {
        
         customId,
         createdBy: req.user._id,
-
+        imagePath 
 
     })
 
@@ -40,15 +42,11 @@ export const updateCategory = async (req, res, next) => {
 
 
     if (req.file) {
-        await cloudinary.uploader.destroy(category.image.public_id)
+        deleteImage(category.imagePath)
 
-        let { secure_url, public_id} = await cloudinary.uploader.upload(req.file.path, {
-            folder: `Takbeer/category/${category.customId}`
-        })
-
-        category.image.secure_url = secure_url
-        category.image.public_id = public_id
-        req.folder = `Takbeer/category/${category.customId}`
+         category.imagePath = req.file.path 
+        
+        req.folder = req.file.path
     }
 
     if(title){

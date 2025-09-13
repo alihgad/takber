@@ -10,25 +10,8 @@ const productRouter = Router()
 
 import * as ps from "./product.service.js";
 
-/**
- * @api {post} /product Create new product (Admin)
- * @apiName CreateProduct
- * @apiGroup Products
- * @apiDescription Create a new product with images (Admin and Data Entry only)
- * @apiHeader {String} Authorization Bearer token for authentication
- * @apiBody {String} title Product title (3-10 characters)
- * @apiBody {String} slug Product slug (unique)
- * @apiBody {String} customId Product custom ID (unique)
- * @apiBody {String} description Product description
- * @apiBody {Number} price Product price (minimum: 0)
- * @apiBody {String} category Category ID reference
- * @apiBody {String} brand Product brand
- * @apiBody {File} image Main product image
- * @apiBody {File[]} images Additional product images (max 6)
- * @apiSuccess {Object} product Created product object
- * @apiError {String} message Error message if validation fails or duplicate data
- */
-productRouter.post('/', authentication, authorization([roleOptions.admin, roleOptions.dataEntry]), multerHost("image").fields([{ name: 'image', maxCount: 1 }, { name: "images", maxCount: 6 }]), validation(productSchema.createProudctSchema), ps.createProduct)
+
+productRouter.post('/', authentication, authorization([roleOptions.admin, roleOptions.dataEntry]), multerHost("products/").fields([{ name: 'image', maxCount: 1 }, { name: "images", maxCount: 6 }]), validation(productSchema.createProudctSchema), ps.createProduct)
 
 /**
  * @api {delete} /product/:ProductID Delete product (Admin)

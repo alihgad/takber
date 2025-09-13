@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import productModel from "./product.model.js";
-import { v2 as cloudinary } from "cloudinary";
+import fs from "fs";
+// import { v2 as cloudinary } from "cloudinary";
 
 let categorySchema = new mongoose.Schema(
   {
@@ -36,18 +37,19 @@ let categorySchema = new mongoose.Schema(
         max: 10,
       },
     },
-    customId: {
-      type: String,
-      required: true,
-      unique: true,
-    },
+
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
+    imagePath : {
+      type: String,
+      required: false,
+    },
   },
-  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
+  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } },
+
 );
 
 // Virtual populate for subcategories
@@ -60,19 +62,17 @@ categorySchema.virtual('subcategories', {
 const deleting = async (doc) => {
   if (doc) {
     // حذف الصورة من cloudinary
-    if (doc.image && doc.image.public_id) {
+    if (doc.imagePath) {
       try {
-        await cloudinary.api.delete_resources_by_prefix(
-          `Takbeer/category/${doc.customId}`
-        );
-        await cloudinary.api.delete_folder(`Takbeer/category/${doc.customId}`);
-      } catch (error) {
+        fs.unlinkSync(doc.imagePath);
+        console.log("Deleted image:", doc.imagePath);
+      }catch (error) {
         console.error("Error deleting image from Cloudinary:", error);
       }
+    }
       await productModel.deleteMany({ category: doc._id }).populate("category"); // حذف المنتجات المرتبطة
     }
-  }
-};
+  };
 
 // post hook بعد findOneAndDelete
 categorySchema.post("findOneAndDelete", async function (doc) {

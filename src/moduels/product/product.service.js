@@ -42,33 +42,18 @@ export const createProduct = asyncHandler(async (req, res, next) => {
     }
   }
 
-  let customId = nanoid(5);
 
-  const { secure_url, public_id } = await cloudinary.uploader.upload(
-    req.files.image[0].path,
-    {
-      folder: `Takbeer/category/${cat.customId}/products/${customId}`,
-    }
-  );
 
-  req.image = { secure_url, public_id };
+
+  req.image = req.files.image[0].path;
 
   let data = [];
   if (req.files?.images?.length > 0) {
-    for (const one of req.files.images) {
-      let { secure_url, public_id } = await cloudinary.uploader.upload(
-        one.path,
-        {
-          folder: `Takbeer/category/${cat.customId}/products/${customId}`,
-        }
-      );
-
-      data.push({ secure_url, public_id });
-    }
+    data = req.files.images.map((image) => image.path);
   }
 
   req.images = data;
-  req.folder = `Takbeer/category/${cat.customId}/products/${customId}`;
+
 
   let product = await productModel.create({
     title: {
@@ -85,8 +70,7 @@ export const createProduct = asyncHandler(async (req, res, next) => {
     },
     price,
     discount: discount || 0,
-    customId,
-    image: { secure_url, public_id },
+    image: req.image,
     images: data,
     category,
     subcategory: subcategory || null,

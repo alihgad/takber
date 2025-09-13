@@ -138,28 +138,6 @@ orderRouter.get("/stats", validation(getAllOrdersSchema), authentication, author
  */
 orderRouter.get("/revenue/total", validation(getTotalRevenueSchema), authentication, authorization(['admin']), asyncHandler(os.getTotalRevenue))
 
-/**
- * @api {get} /order/revenue/categories Get category sales statistics (Admin)
- * @apiName GetCategorySales
- * @apiGroup Orders
- * @apiDescription Get detailed sales statistics grouped by category (Admin only)
- * @apiHeader {String} Authorization Bearer token for authentication
- * @apiQuery {String} [status] Filter by order status (default: delivered,shipped)
- * @apiQuery {String} [from] Filter sales from date (YYYY-MM-DD)
- * @apiQuery {String} [to] Filter sales to date (YYYY-MM-DD)
- * @apiSuccess {String} message Success message
- * @apiSuccess {Object} filters Applied filters
- * @apiSuccess {Object} overallStats Overall statistics
- * @apiSuccess {Number} overallStats.totalRevenue Total revenue across all categories
- * @apiSuccess {Number} overallStats.totalItems Total items sold
- * @apiSuccess {Number} overallStats.totalCategories Number of categories with sales
- * @apiSuccess {String} overallStats.averageRevenuePerCategory Average revenue per category
- * @apiSuccess {Array} categories Array of category sales data
- * @apiSuccess {String} categories[].categoryName Category name
- * @apiSuccess {Number} categories[].totalRevenue Category total revenue
- * @apiSuccess {Number} categories[].totalItems Category total items sold
- * @apiSuccess {Number} categories[].orderCount Number of orders in category
- * @apiSuccess {String} categories[].averageOrderValue Average order value in category
- * @apiSuccess {Array} categories[].products Array of products in category with sales data
- */
+
+
 orderRouter.get("/revenue/categories", validation(getCategorySalesSchema), authentication, authorization(['admin']), asyncHandler(os.getCategorySales)) 

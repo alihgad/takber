@@ -1,32 +1,19 @@
 import multer from "multer";
 import dotenv from "dotenv";
-import {v2 as cloudinary} from "cloudinary"
-
-
-dotenv.config()
-
-export const cloudinaryConfig = cloudinary.config({
-    cloud_name: process.env.cloud_name,
-    api_key: process.env.api_key,
-    api_secret: process.env.api_secret,
-});
-
- 
 
 
 
-export const multerHost = (type) => {
-    
-    const storage = multer.diskStorage({})
 
-    const fileFilter = (req, file, cb) => {
+export const multerHost = (path) => {
 
-        if (file.mimetype.startsWith(type)) {
-            cb(null, true)
-        } else {
-            cb(null, false)
+    const storage = multer.diskStorage({
+        filename: (req, file, cb) => {
+            cb(null, file.originalname + "-" + Date.now())
+        },
+        destination: (req, file, cb) => {
+            cb(null, path)
         }
-    }
-
-    return multer({ storage ,fileFilter})
+    })
+    return multer({ storage })
 }
+

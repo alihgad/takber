@@ -45,32 +45,11 @@ let productSchema = new mongoose.Schema({
         }
     },
     image: {
-        secure_url: {
-            type: String,
-            required: true
-        },
-        public_id: {
-            type: String,
-            required: true
-        }
+        type: String
     },
     images: {
-        type: [{
-            secure_url: {
-                type: String,
-                required: true
-            },
-            public_id: {
-                type: String,
-                required: true
-            }
-        }],
+        type: [String],
         required: true
-    },
-    customId: {
-        type: String,
-        required: true,
-        unique: true
     },
     description: {
         arabic: {

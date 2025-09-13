@@ -10,9 +10,10 @@ export const multerHost = (path) => {
 
     const storage = multer.diskStorage({
         filename: (req, file, cb) => {
-            cb(null, file.originalname + "-" + Date.now())
+            let [name, ext] = file.originalname.split(".")
+            cb(null, name + "-" + Date.now() + ext)
         },
-        destination: path
+        destination: "uploads/" + path
     })
     return multer({ storage })
 }

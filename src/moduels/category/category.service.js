@@ -6,9 +6,9 @@ import { deleteImage } from "../../services/deleteImage.js"
 
 export const createCategory = async (req, res, next) => {
     let customId = nanoid(5)
-    
+    let imagePath
     if(req.image){
-        let imagePath = req.image.path + "/" + req.image.filename
+        imagePath = req.image.path + "/" + req.image.filename
     }
 
     let category = await categoryModel.create({
@@ -24,7 +24,6 @@ export const createCategory = async (req, res, next) => {
             arabic: req.body.description.arabic,
             english: req.body.description.english
         },
-        image,
         customId,
         createdBy: req.user._id,
         imagePath 

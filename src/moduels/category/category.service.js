@@ -7,9 +7,13 @@ import { deleteImage } from "../../services/deleteImage.js"
 export const createCategory = async (req, res, next) => {
     let customId = nanoid(5)
     let imagePath
-    if(req.image){
-        imagePath = req.image.path + "/" + req.image.filename
+    if(req.file){
+        imagePath = req.file.path + "/" + req.file.filename
     }
+    console.log(req.file)
+    
+    console.log(imagePath)
+    
 
     let category = await categoryModel.create({
         title: {
@@ -29,6 +33,9 @@ export const createCategory = async (req, res, next) => {
         imagePath 
 
     })
+
+    console.log(category)
+    
 
     return res.status(201).json({ message: "done", category })
 }

@@ -1,7 +1,5 @@
 import multer from "multer";
-import dotenv from "dotenv";
-import fs from "fs";
-import path from "path";
+
 
 
 
@@ -15,6 +13,8 @@ export const multerHost = (path) => {
         },
         destination: "uploads/" + path
     })
+
+    
     return multer({ storage })
 }
 

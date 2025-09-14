@@ -8,7 +8,7 @@ export const createCategory = async (req, res, next) => {
     let customId = nanoid(5)
     let imagePath
     if(req.file){
-        imagePath = req.file.path + "/" + req.file.filename
+        imagePath = req.file.path 
     }
     console.log(req.file)
     

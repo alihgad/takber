@@ -44,8 +44,8 @@ export const changePhotoSchema = {
 export const updateProudctSchema = {
     body: joi.object({
         title: joi.object({
-            arabic: joi.string().min(3).max(30),
-            english: joi.string().min(3).max(30)
+            arabic: joi.string(),
+            english: joi.string()
         }),
         description: joi.object({
             arabic: joi.string(),

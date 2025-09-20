@@ -115,8 +115,10 @@ productSchema.pre('save', function(next) {
     // حساب السعر النهائي
     if (this.isDiscounted) {
         this.finalPrice = this.price - (this.price * (this.discount / 100));
+        this.finalPrice = Math.round(this.finalPrice);
     } else {
         this.finalPrice = this.price;
+        this.finalPrice = Math.round(this.finalPrice);
     }
     next();
 });
@@ -133,8 +135,10 @@ productSchema.pre('findOneAndUpdate', function(next) {
     // حساب السعر النهائي
     if (update.isDiscounted && update.discount > 0) {
         update.finalPrice = update.price - (update.price * (update.discount / 100));
+        update.finalPrice = Math.round(update.finalPrice);
     } else if (update.price !== undefined) {
         update.finalPrice = update.price;
+        update.finalPrice = Math.round(update.finalPrice);
     }
     next();
 });

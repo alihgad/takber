@@ -121,6 +121,6 @@ productRouter.get("/hotDeals", ps.gethotDeals)
  * @apiError {String} message Error message if product not found
  */
 productRouter.get('/:ProductID', validation(productSchema.getOneProudctSchema), ps.getOneProudct)
-productRouter.put('/changeImages/:productID', authentication, authorization([roleOptions.admin , roleOptions.dataEntry]), multerHost("products/").fields([{ name: "images", maxCount: 4 }]), ps.changeImages)
+productRouter.put('/changeImages/:productID', authentication, authorization([roleOptions.admin , roleOptions.dataEntry]), multerHost("products/").single("image"), ps.changeImages)
 
 export default productRouter

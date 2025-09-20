@@ -355,8 +355,11 @@ export const gethotDeals = asyncHandler(async (req, res, next) => {
 
 export const changeImages = asyncHandler(async (req, res, next) => {
   const { productID } = req.params;
-  const { images } = req.files;
   const { path } = req.body;
+
+  if(!req.file){
+    return next(new Error("Image not found", { cause: 404 }));
+  }
 
 
   let product = await productModel.findOne({ _id: productID });
@@ -376,9 +379,7 @@ export const changeImages = asyncHandler(async (req, res, next) => {
 
   }
 
-  images.forEach(image => {
-    product.images.push(image.path);
-  });
+  product.images.push(req.file.path);
 
   await product.save();
 

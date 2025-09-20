@@ -1,11 +1,10 @@
 import slugify from "slugify";
-import { nanoid } from "nanoid";
 import { asyncHandler } from "../../utils/ErrorHandling.js";
 import productModel from "./../../db/models/product.model.js";
-import { v2 as cloudinary } from "cloudinary";
 import categoryModel from "../../db/models/category.model.js";
 import subcategoryModel from "../../db/models/subcategory.model.js";
 import { getProductStocks } from "../../utils/productStocks.js";
+import { deleteImage } from "../../services/deleteImage.js";
 
 export const createProduct = asyncHandler(async (req, res, next) => {
   const { title, description, price, discount, category, subcategory, brand } =
@@ -186,13 +185,13 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
 
 export const changePhoto = asyncHandler(async (req, res, next) => {
   const { ProductID } = req.params;
-  let { public_id } = req.body;
+  let { path } = req.body;
 
   if (!req.file) {
     next(new Error("file not found", { cause: 404 }));
   }
 
-  if (!public_id) {
+  if (!path) {
     next(new Error("public id not found", { cause: 404 }));
   }
 
@@ -204,61 +203,18 @@ export const changePhoto = asyncHandler(async (req, res, next) => {
     next(new Error("Product not found", { cause: 404 }));
   }
 
-  let folderPath = `Takbeer/category/${product.category.customId}/products/${product.customId}`;
 
-  if (product.image.public_id == public_id) {
-    let x = await cloudinary.uploader
-      .destroy(public_id)
-      .then(async () => {
-        let { secure_url, public_id } = await cloudinary.uploader.upload(
-          req.file.path,
-          {
-            folder: folderPath,
-          }
-        );
-
-        product.image.secure_url = secure_url;
-        product.image.public_id = public_id;
-        await product.save();
-      })
-      .catch((err) => {
-        next(err);
-      })
-      .finally(() => {
-        return res.json({ msg: "Product updated in image", product });
-      });
+  if(product.image){
+    deleteImage(product.image);
   }
 
-  let flag = false;
+  product.image = path;
 
-  for (const image of product.images) {
-    if (image.public_id == public_id) {
-      flag = true;
-      let { secure_url, public_id } = await cloudinary.uploader.upload(
-        req.file.path,
-        {
-          folder: folderPath,
-        }
-      );
-      image.secure_url = secure_url;
-      image.public_id = public_id;
-      await product.save();
-      break;
-    }
-  }
+  await product.save();
 
-  if (flag) {
-    let x = await cloudinary.uploader
-      .destroy(public_id)
-      .catch((err) => {
-        next(err);
-      })
-      .finally(() => {
-        return res.json({ msg: "Product updated in images", product });
-      });
-  } else {
-    next(new Error("public id not found", { cause: 404 }));
-  }
+  return res.json({ msg: "Photo changed", product });
+
+ 
 });
 
 export const getfullProudcts = asyncHandler(async (req, res, next) => {

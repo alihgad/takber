@@ -128,12 +128,12 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
     if (discount < 0 || discount > 100) {
       return next(new Error("Discount must be between 0 and 100", { cause: 400 }));
     }
-    if(discount > 0 ){
+    if (discount > 0) {
       product.isDiscounted = true;
-    }else{
+    } else {
       product.isDiscounted = false;
     }
-    
+
     product.discount = discount;
   }
 
@@ -184,37 +184,38 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
 });
 
 export const changePhoto = asyncHandler(async (req, res, next) => {
-  const { ProductID } = req.params;
-  let { path } = req.body;
-
+  const { productID } = req.params;
+ 
+  
   if (!req.file) {
     next(new Error("file not found", { cause: 404 }));
   }
 
-  if (!path) {
-    next(new Error("public id not found", { cause: 404 }));
-  }
 
-  let product = await productModel
-    .findOne({ _id: ProductID })
-    .populate("category");
+  let product = await productModel.findOne({ _id: productID })
+
+    
+
 
   if (!product) {
-    next(new Error("Product not found", { cause: 404 }));
+    return next(new Error("Product not found", { cause: 404 }));
   }
 
 
-  if(product.image){
+  if (product.image) {
     deleteImage(product.image);
   }
 
-  product.image = path;
+  product.image = req.file.path;
+
 
   await product.save();
+  console.log(product);
+  
 
   return res.json({ msg: "Photo changed", product });
 
- 
+
 });
 
 export const getfullProudcts = asyncHandler(async (req, res, next) => {
@@ -327,7 +328,7 @@ export const deleteProudct = asyncHandler(async (req, res, next) => {
 
 export const getNewArrival = asyncHandler(async (req, res, next) => {
   let products = await productModel
-    .find(({updatedAt: { $gt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) }}))
+    .find(({ updatedAt: { $gt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) } }))
     .sort({ updatedAt: -1 })
     .limit(10)
     .populate(["category", "subcategory"])

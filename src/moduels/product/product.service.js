@@ -357,6 +357,10 @@ export const changeImages = asyncHandler(async (req, res, next) => {
   const { productID } = req.params;
   const { path } = req.body;
 
+
+  console.log("in")
+  
+
   if(!req.file){
     return next(new Error("Image not found", { cause: 404 }));
   }
@@ -368,17 +372,26 @@ export const changeImages = asyncHandler(async (req, res, next) => {
     return next(new Error("Product not found", { cause: 404 }));
   }
 
+
   if (product.images) {
-    let target = product.images.findIndex(image => image === path);
+
+
+    let target = product.images.findIndex(image => {
+
+      return image === path
+    });
+
+    
+    
     if (target === -1) {
       return next(new Error("Image not found", { cause: 404 }));
     }
 
     deleteImage(product.images[target]);
     product.images.splice(target, 1);
-
   }
-
+   
+  
   product.images.push(req.file.path);
 
   await product.save();

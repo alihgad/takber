@@ -1,8 +1,6 @@
 import mongoose from "mongoose";
 import stockModel from "./stock.model.js";
-import { v2 as cloudinary } from "cloudinary";
-import categoryModel from "./category.model.js";
-import subcategoryModel from "./subcategory.model.js";
+
 
 
 

@@ -11,7 +11,7 @@ const productRouter = Router()
 import * as ps from "./product.service.js";
 
 
-productRouter.post('/', authentication, authorization([roleOptions.admin, roleOptions.dataEntry]), multerHost("products/").fields([{ name: 'image', maxCount: 1 }, { name: "images", maxCount: 6 }]), validation(productSchema.createProudctSchema), ps.createProduct)
+productRouter.post('/', authentication, authorization([roleOptions.admin, roleOptions.dataEntry]), multerHost("products/").fields([{ name: 'image', maxCount: 1 }, { name: "images", maxCount: 4 }]), validation(productSchema.createProudctSchema), ps.createProduct)
 
 /**
  * @api {delete} /product/:ProductID Delete product (Admin)
@@ -121,5 +121,6 @@ productRouter.get("/hotDeals", ps.gethotDeals)
  * @apiError {String} message Error message if product not found
  */
 productRouter.get('/:ProductID', validation(productSchema.getOneProudctSchema), ps.getOneProudct)
+productRouter.put('/changeImages/:productID', authentication, authorization([roleOptions.admin , roleOptions.dataEntry]), multerHost("products/").fields([{ name: "images", maxCount: 4 }]), ps.changeImages)
 
 export default productRouter

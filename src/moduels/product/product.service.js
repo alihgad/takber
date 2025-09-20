@@ -185,8 +185,8 @@ export const updateProduct = asyncHandler(async (req, res, next) => {
 
 export const changePhoto = asyncHandler(async (req, res, next) => {
   const { productID } = req.params;
- 
-  
+
+
   if (!req.file) {
     next(new Error("file not found", { cause: 404 }));
   }
@@ -194,7 +194,7 @@ export const changePhoto = asyncHandler(async (req, res, next) => {
 
   let product = await productModel.findOne({ _id: productID })
 
-    
+
 
 
   if (!product) {
@@ -211,7 +211,7 @@ export const changePhoto = asyncHandler(async (req, res, next) => {
 
   await product.save();
   console.log(product);
-  
+
 
   return res.json({ msg: "Photo changed", product });
 
@@ -350,4 +350,38 @@ export const gethotDeals = asyncHandler(async (req, res, next) => {
   let result = await getProductStocks(products);
 
   return res.json({ msg: "Hot deals fetched", result });
+});
+
+
+export const changeImages = asyncHandler(async (req, res, next) => {
+  const { productID } = req.params;
+  const { images } = req.files;
+  const { path } = req.body;
+
+
+  let product = await productModel.findOne({ _id: productID });
+
+  if (!product) {
+    return next(new Error("Product not found", { cause: 404 }));
+  }
+
+  if (product.images) {
+    let target = product.images.findIndex(image => image === path);
+    if (target === -1) {
+      return next(new Error("Image not found", { cause: 404 }));
+    }
+
+    deleteImage(product.images[target]);
+    product.images.splice(target, 1);
+
+  }
+
+  images.forEach(image => {
+    product.images.push(image.path);
+  });
+
+  await product.save();
+
+  return res.json({ msg: "Images changed", product });
+
 });

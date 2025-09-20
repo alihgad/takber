@@ -20,8 +20,8 @@ export let createCategory = {
 export let updateCategory = {
     body: Joi.object({
         title: Joi.object({
-            arabic: Joi.string().min(3).max(10),
-            english: Joi.string().min(3).max(10)
+            arabic: Joi.string(),
+            english: Joi.string()
         }),
 
 

@@ -10,6 +10,7 @@ import wishlistRouter from "./moduels/wishList/whisList.controller.js"
 import shippingAmountRouter from "./moduels/shippingAmount/shippingAmount.controller.js"
 import { staticsRouter } from "./moduels/statics/statics.controller.js"
 import { imagesRouter } from "./moduels/images/images.controller.js"
+import coverRouter from "./moduels/cover/cover.controller.js"
 
 export default (app)=>{
 
@@ -26,4 +27,5 @@ export default (app)=>{
     app.use("/shippingAmount" , shippingAmountRouter)
     app.use("/statics" , staticsRouter)
     app.use("/images" , imagesRouter)
+    app.use("/cover" , coverRouter)
 }

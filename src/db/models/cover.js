@@ -15,8 +15,9 @@ let coverSchema = new mongoose.Schema({
 })
 
 
+const Cover = mongoose.model("Cover", coverSchema)
 
-export default mongoose.model("cover", coverSchema)
+export default Cover
 
 
 

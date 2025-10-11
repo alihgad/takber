@@ -5,7 +5,7 @@ export const createOrderSchema = {
     body: Joi.object({
         address: Joi.array().items(Joi.string()).required(),
         name: Joi.string().required(),
-        email: Joi.string().email().required(),
+        email: Joi.string().email(),
         phoneNumbers: Joi.array().items(Joi.string().regex(/^01[0125][0-9]{8}$/)).required(),
         city: Joi.string().required(),
         couponId: glopalSchema.id.optional(),

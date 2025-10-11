@@ -219,9 +219,19 @@ export const changePhoto = asyncHandler(async (req, res, next) => {
 });
 
 export const getfullProudcts = asyncHandler(async (req, res, next) => {
-  let { brand, category, subcategory, search } = req.query;
+  let { brand, category, subcategory, search , page } = req.query;
+
+  let limit = 10
+
+  if(!page){
+    page = 1
+  }
+
+  let skip = (page - 1) * limit
 
   let query = {};
+
+  
 
   if (brand) {
     query.brand = brand;
@@ -252,7 +262,7 @@ export const getfullProudcts = asyncHandler(async (req, res, next) => {
     };
   }
 
-  let products = await productModel.find(query).lean();
+  let products = await productModel.find(query).skip(skip).limit(limit).lean();
 
   if (!products || products.length === 0) {
     return res.status(404).json({ msg: "No products found" });
@@ -265,7 +275,9 @@ export const getfullProudcts = asyncHandler(async (req, res, next) => {
 });
 
 export const getProudcts = asyncHandler(async (req, res, next) => {
+  let { page } = req.query;
   let filter = {};
+  
 
   if (req.query.category) {
     filter.category = req.query.category;
@@ -279,7 +291,16 @@ export const getProudcts = asyncHandler(async (req, res, next) => {
     ];
   }
 
-  let products = await productModel.find(filter).populate("category").lean();
+  if(req.query.subcategory){
+    filter.subcategory = req.query.subcategory
+  }
+
+  if(req.query.brand){
+    filter.brand = req.query.brand
+  }
+
+
+  let products = await productModel.find(filter).limit(10).skip(((page||1) - 1) * 10).populate("category").lean();
 
   if (req.query.subcategory) {
     filter.subcategory = req.query.subcategory;

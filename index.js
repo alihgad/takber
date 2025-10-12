@@ -6,7 +6,7 @@ import { deleteFolder, deleteFromDB, globalErrorHandling } from './src/utils/Err
 import cors from 'cors'
 dotenv.config()
 const app = express()
-const port = process.env.PORT || 3000
+const port =  5500
 
 connection
 app.use(cors())

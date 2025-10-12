@@ -6,7 +6,7 @@ export const createOrderSchema = {
         address: Joi.array().items(Joi.string()).required(),
         name: Joi.string().required(),
         email: Joi.string().email(),
-        phoneNumbers: Joi.array().items(Joi.string().regex(/^01[0125][0-9]{8}$/)).required(),
+        phoneNumbers: Joi.array().items(Joi.string().regex(/^01[0125][0-9]{8}$/).required()).required(),
         city: Joi.string().required(),
         couponId: glopalSchema.id.optional(),
         products: Joi.array().items(Joi.object({

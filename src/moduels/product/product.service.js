@@ -252,9 +252,7 @@ export const getfullProudcts = asyncHandler(async (req, res, next) => {
     ];
   }
 
-  // If both category and subcategory are provided, find products that match both
-  // If only category is provided, find products with that category (with or without subcategory)
-  // If only subcategory is provided, find products with that subcategory
+
   if (category && subcategory) {
     query = {
       ...query,
@@ -263,6 +261,13 @@ export const getfullProudcts = asyncHandler(async (req, res, next) => {
   }
 
   let products = await productModel.find(query).skip(skip).limit(limit).lean();
+  let totalProducts = await productModel.countDocuments(query);
+
+  let totalPages = Math.ceil(totalProducts / limit);
+  let hasNextPage = page < totalPages;
+  let hasPreviousPage = page > 1;
+  let nextPage = hasNextPage ? page + 1 : null;
+  let previousPage = hasPreviousPage ? page - 1 : null;
 
   if (!products || products.length === 0) {
     return res.status(404).json({ msg: "No products found" });
@@ -271,7 +276,7 @@ export const getfullProudcts = asyncHandler(async (req, res, next) => {
   let result = await getProductStocks(products, req.query);
   console.log(result);
 
-  return res.json({ msg: "Products fetched", result });
+  return res.json({ msg: "Products fetched", result , totalPages, totalProducts });
 });
 
 export const getProudcts = asyncHandler(async (req, res, next) => {
@@ -301,6 +306,10 @@ export const getProudcts = asyncHandler(async (req, res, next) => {
 
 
   let products = await productModel.find(filter).limit(10).skip(((page||1) - 1) * 10).populate("category").lean();
+  let totalProducts = await productModel.countDocuments(filter);
+
+  let totalPages = Math.ceil(totalProducts / 10);
+
 
   if (req.query.subcategory) {
     filter.subcategory = req.query.subcategory;
@@ -310,7 +319,7 @@ export const getProudcts = asyncHandler(async (req, res, next) => {
     return res.status(404).json({ msg: "No products found" });
   }
 
-  return res.json({ msg: "Products fetched", products });
+  return res.json({ msg: "Products fetched", products , totalPages, totalProducts });
 });
 
 export const getOneProudct = asyncHandler(async (req, res, next) => {

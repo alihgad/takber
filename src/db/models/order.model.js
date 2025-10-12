@@ -57,8 +57,7 @@ let orderSchema = new mongoose.Schema({
         required: true
     },
     email:{
-        type: String,
-        required: true
+        type: String
     },
     cart:[
         {

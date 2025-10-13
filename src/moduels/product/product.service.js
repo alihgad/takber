@@ -445,6 +445,6 @@ export const getBrands = asyncHandler(async(req,res,next)=>{
   let uniqueBrands = Array.from(test);
 
   console.log(await productModel.countDocuments())
-  return res.json({msg : "brands fetched" , brands : uniqueBrands , totalBrands : brands})
+  return res.json({msg : "brands fetched" , brands : uniqueBrands })
 
 })

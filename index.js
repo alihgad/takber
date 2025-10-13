@@ -4,6 +4,7 @@ import connection from './src/db/connection.js'
 import bootstrap from './src/bootstrap.js'
 import { deleteFolder, deleteFromDB, globalErrorHandling } from './src/utils/ErrorHandling.js'
 import cors from 'cors'
+import morgan from 'morgan'
 dotenv.config()
 const app = express()
 const port = process.env.PORT || 3000
@@ -11,6 +12,9 @@ const port = process.env.PORT || 3000
 connection
 app.use(cors())
 app.use(express.json())
+
+// Morgan middleware for logging requests
+app.use(morgan('dev'))
 
 app.use(express.urlencoded({ extended: true }))
 

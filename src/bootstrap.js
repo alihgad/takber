@@ -11,10 +11,12 @@ import shippingAmountRouter from "./moduels/shippingAmount/shippingAmount.contro
 import { staticsRouter } from "./moduels/statics/statics.controller.js"
 import { imagesRouter } from "./moduels/images/images.controller.js"
 import coverRouter from "./moduels/cover/cover.controller.js"
+import { getBrands } from "./moduels/product/product.service.js"
 
 export default (app)=>{
 
 
+    app.get("/brands" , getBrands)
     app.use("/user" , userRouter)
     app.use("/product" , productRouter)
     app.use("/category" , categoryRouter)
@@ -28,4 +30,5 @@ export default (app)=>{
     app.use("/statics" , staticsRouter)
     app.use("/images" , imagesRouter)
     app.use("/cover" , coverRouter)
+    
 }

@@ -183,7 +183,7 @@ productSchema.pre("deleteMany", { document: false, query: true }, async function
     }
 });
 
-// post hook لـ remove (لو حذفت document مباشر)
+
 productSchema.post("remove", async function () {
     await deleting(this); // هنا this = document
 });

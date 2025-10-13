@@ -219,6 +219,7 @@ export const changePhoto = asyncHandler(async (req, res, next) => {
 });
 
 export const getfullProudcts = asyncHandler(async (req, res, next) => {
+
   let { brand, category, subcategory, search , page } = req.query;
 
   let limit = 10
@@ -429,3 +430,21 @@ export const changeImages = asyncHandler(async (req, res, next) => {
   return res.json({ msg: "Images changed", product });
 
 });
+
+
+export const getBrands = asyncHandler(async(req,res,next)=>{
+  let brands = await productModel.find().select('brand')
+ 
+  
+  if(!brands){
+    next("brands not found" , {cause : 404})
+  }
+  
+  // console.log(brands);
+  let test = new Set(brands.map(item => item.brand));
+  let uniqueBrands = Array.from(test);
+
+  console.log(await productModel.countDocuments())
+  return res.json({msg : "brands fetched" , brands : uniqueBrands , totalBrands : brands})
+
+})

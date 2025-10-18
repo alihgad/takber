@@ -5,6 +5,7 @@ import categoryModel from "../../db/models/category.model.js";
 import subcategoryModel from "../../db/models/subcategory.model.js";
 import { getProductStocks } from "../../utils/productStocks.js";
 import { deleteImage } from "../../services/deleteImage.js";
+import { Types } from "mongoose";
 
 export const createProduct = asyncHandler(async (req, res, next) => {
   const { title, description, price, discount, category, subcategory, brand } =
@@ -289,6 +290,14 @@ export const getProudcts = asyncHandler(async (req, res, next) => {
     filter.category = req.query.category;
   }
 
+  if(req.query.subcategory){
+    filter.subcategory = req.query.subcategory
+  }
+
+  if(req.query.brand){
+    filter.brand = req.query.brand
+  }
+
   if (req.query.search) {
     let search = req.query.search;
     filter.$or = [
@@ -297,13 +306,7 @@ export const getProudcts = asyncHandler(async (req, res, next) => {
     ];
   }
 
-  if(req.query.subcategory){
-    filter.subcategory = req.query.subcategory
-  }
-
-  if(req.query.brand){
-    filter.brand = req.query.brand
-  }
+  
 
 
   let products = await productModel.find(filter).limit(10).skip(((page||1) - 1) * 10).populate("category").lean();
@@ -433,18 +436,57 @@ export const changeImages = asyncHandler(async (req, res, next) => {
 
 
 export const getBrands = asyncHandler(async(req,res,next)=>{
-  let brands = await productModel.find().select('brand')
- 
   
+  
+  let filter = {}
+
+  if(req.query.category){
+    filter.category = new Types.ObjectId(req.query.category);
+  }
+  
+  if(req.query.subcategory){
+    filter.subcategory = Types.ObjectId(req.query.subcategory);
+  }
+
+  if(req.query.title){
+    filter.$or = [
+      { "title.arabic": { $regex: req.query.title, $options: "i" } },
+      { "title.english": { $regex: req.query.title, $options: "i" } },
+    ];
+  }
+
+
+
+  console.log(filter);
+
+  let brands = await productModel.aggregate(
+    [
+  {
+    $match: filter
+  },
+  {
+    $group:{
+      _id:"$brand",
+      count:{
+          $sum:1
+      }
+    }
+  }
+]
+  )
+
+
+
+  console.log(brands);
   if(!brands){
     next("brands not found" , {cause : 404})
   }
   
   // console.log(brands);
-  let test = new Set(brands.map(item => item.brand));
-  let uniqueBrands = Array.from(test);
+  // let test = new Set(brands.map(item => item.brand));
+  // let uniqueBrands = Array.from(test);
 
   console.log(await productModel.countDocuments())
-  return res.json({msg : "brands fetched" , brands : uniqueBrands })
+  return res.json({msg : "brands fetched" , brands })
 
 })
